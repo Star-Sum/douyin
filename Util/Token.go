@@ -46,7 +46,7 @@ func ParserToken(tokenString string) (int64, error) {
 		return token.Claims.(*BaseInfo).UserId, nil
 	} else {
 		Log.ErrorLogWithoutPanic("Invalid token!", err)
-		return 0, err
+		return -1, err
 	}
 }
 

@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	//Servlet.ServerStartup()
 	Servlet.DataBaseInit()
+	Servlet.ServerStartup()
 }
