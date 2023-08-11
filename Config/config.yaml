@@ -1,0 +1,15 @@
+mysql:
+  url: 127.0.0.1
+  port: 3306
+  username: root
+  password: 123456
+  dbname: douyin
+  protocol: tcp
+  charset: utf8mb4
+  parsetime: true
+  loc: local
+
+redis:
+  url: 127.0.0.1
+  port: 6379
+
