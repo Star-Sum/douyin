@@ -176,7 +176,13 @@ func NetServerStartup() {
 		request.ToUserID = c.Query("to_user_id")
 		c.JSON(http.StatusOK, Controller.MessageImp(request))
 	})
+
+	//加载静态资源，实现路径到URL的映射
+	r.Static("/douyin/image", "Resource/Image")
+	r.Static("/douyin/text", "Resource/text")
+	r.Static("/douyin/vedio", "Resource/Vedio")
 	r.Run(":8080")
+
 }
 
 func DataBaseInit() (*gorm.DB, *redis.Client) {
