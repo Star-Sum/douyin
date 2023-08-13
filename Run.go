@@ -1,10 +1,8 @@
 package main
 
-import (
-	"douyin/Servlet"
-)
+import "douyin/Servlet"
 
 func main() {
-	Servlet.DataBaseInit()
-	Servlet.ServerStartup()
+	Servlet.DbServerStartup()
+	Servlet.NetServerStartup()
 }

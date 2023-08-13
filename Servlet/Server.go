@@ -3,6 +3,8 @@ package Servlet
 import "C"
 import (
 	"douyin/Controller"
+	"douyin/Dao/MysqlDao"
+	"douyin/Dao/RedisDao"
 	"douyin/Entity/RequestEntity"
 	"douyin/Log"
 	"douyin/Util"
@@ -13,7 +15,8 @@ import (
 	"net/http"
 )
 
-func ServerStartup() {
+// NetServerStartup 启动前端网络服务
+func NetServerStartup() {
 	r := gin.Default()
 
 	//基础功能
@@ -181,4 +184,11 @@ func DataBaseInit() (*gorm.DB, *redis.Client) {
 	rdb := Util.InitRedisDb()
 	Util.TableCreate(mdb)
 	return mdb, rdb
+}
+
+// DbServerStartup 启动数据库服务，初始化数据库
+func DbServerStartup() {
+	mdb, rdb := DataBaseInit()
+	MysqlDao.GetMysqlDBHandler(mdb)
+	RedisDao.GetRedisDBHandler(rdb)
 }

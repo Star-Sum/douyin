@@ -2,6 +2,7 @@ package Util
 
 // 启动数据库
 import (
+	"context"
 	"database/sql"
 	"douyin/Entity/TableEntity"
 	"douyin/Log"
@@ -91,6 +92,8 @@ func InitMysqlDb() *gorm.DB {
 
 }
 
+var ctx = context.Background()
+
 func InitRedisDb() *redis.Client {
 	var (
 		config    DbConfig
@@ -108,7 +111,8 @@ func InitRedisDb() *redis.Client {
 		Password: "",
 		DB:       0,
 	})
-	if rdb == nil {
+	_, err1 := rdb.Ping(ctx).Result()
+	if err1 != nil {
 		Log.ErrorLogWithPanic("Redis Connect Failed!", nil)
 	}
 	Log.NormalLog("Redis Connect Success!", nil)
