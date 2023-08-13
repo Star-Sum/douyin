@@ -10,7 +10,7 @@ type UserInfo struct {
 	IsFollow        bool   // true-已关注，false-未关注
 	Name            string // 用户名称
 	Signature       string // 个人简介
-	TotalFavorited  string // 获赞数量
+	TotalFavorited  int64  // 获赞数量
 	WorkCount       int64  // 作品数
 }
 
