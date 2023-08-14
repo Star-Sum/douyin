@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-var userDaoImpl *MysqlDao.UserDaoImpl
+var userDaoImpl MysqlDao.UserDao = &MysqlDao.UserDaoImpl{}
 
 func UserRegisterProcess(request RequestEntity.RegisterRequest) RequestEntity.RegisterBack {
 	//var (

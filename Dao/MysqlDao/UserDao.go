@@ -11,7 +11,7 @@ import (
 type UserDao interface {
 
 	// AddUser 添加用户，同时操作user_infos和user_account_infos表，并且返回userId
-	AddUser(user RequestEntity.User) (int64, error)
+	AddUser(rUser RequestEntity.RegisterRequest) (int64, error)
 
 	// CountUserByUsername 根据用户名获取user的数量
 	CountUserByUsername(username string) (int64, error)
@@ -20,7 +20,7 @@ type UserDao interface {
 	GetUserById(id int64) (*RequestEntity.User, error)
 
 	// GetUserIdByUsernameANDPassword 根据用户名和密码获取userId
-	GetUserIdByUsernameANDPassword(id int64) (int64, error)
+	GetUserIdByUsernameANDPassword(username, password string) (*int64, error)
 }
 type UserDaoImpl struct {
 }
