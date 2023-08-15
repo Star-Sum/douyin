@@ -1,14 +1,20 @@
 package Service
 
 import (
+	"context"
 	"douyin/Dao/MysqlDao"
+	"douyin/Dao/RedisDao"
 	"douyin/Entity/RequestEntity"
 	"douyin/Log"
 	"douyin/Util"
 	"strconv"
 )
 
-var userDaoImpl MysqlDao.UserDao = &MysqlDao.UserDaoImpl{}
+var MUserDaoImpl MysqlDao.UserDao = &MysqlDao.UserDaoImpl{}
+
+var RUserDaoImpl RedisDao.UserDao = &RedisDao.UserDaoImpl{
+	Ctx: context.Background(),
+}
 
 func UserRegisterProcess(request RequestEntity.RegisterRequest) RequestEntity.RegisterBack {
 	//var (
@@ -17,7 +23,7 @@ func UserRegisterProcess(request RequestEntity.RegisterRequest) RequestEntity.Re
 	Log.NormalLog("UserRegisterProcess", nil)
 
 	//获取使用该用户名的账号数量
-	num, err := userDaoImpl.CountUserByUsername(request.Username)
+	num, err := MUserDaoImpl.CountUserByUsername(request.Username)
 	if err != nil {
 		Log.ErrorLogWithoutPanic("register failed", err)
 		return RequestEntity.RegisterBack{
@@ -36,7 +42,7 @@ func UserRegisterProcess(request RequestEntity.RegisterRequest) RequestEntity.Re
 	}
 
 	//允许注册，进行持久化储存
-	userId, err := userDaoImpl.AddUser(request)
+	userId, err := MUserDaoImpl.AddUser(request)
 	if err != nil {
 		Log.ErrorLogWithoutPanic("register failed", err)
 		return RequestEntity.RegisterBack{
@@ -63,7 +69,7 @@ func UserLoginProcess(request RequestEntity.LoginRequest) RequestEntity.LoginBac
 
 	//根据用户名和密码查询用户并返回useId
 	Log.NormalLog("UserLoginProcess", nil)
-	userId, err := userDaoImpl.GetUserIdByUsernameANDPassword(request.Username, Util.CalcMD5(request.Password))
+	userId, err := MUserDaoImpl.GetUserIdByUsernameANDPassword(request.Username, Util.CalcMD5(request.Password))
 	if err != nil || userId == nil {
 		statusMsg := "username or password is incorrect"
 		Log.NormalLog(statusMsg, err)
@@ -106,24 +112,46 @@ func UserInfoProcess(request RequestEntity.UserInfoRequest) RequestEntity.UserIn
 		}
 	}
 
-	//获取用户信息
-	user, err := userDaoImpl.GetUserById(userId)
-	if err != nil {
-		statusMsg := "get user info failed"
-		Log.ErrorLogWithoutPanic(statusMsg, err)
-		return RequestEntity.UserInfoBack{
-			StatusCode: 1,
-			StatusMsg:  &statusMsg,
-			User:       nil,
-		}
-	}
+	//判断缓存中是否存在用户信息
+	exists, _ := RUserDaoImpl.Exists(userId)
 
-	//返回用户信息
-	statusMsg := "get user info success"
-	userInfoBack := RequestEntity.UserInfoBack{
-		StatusCode: 0,
-		StatusMsg:  &statusMsg,
-		User:       user,
+	if exists {
+
+		user := RUserDaoImpl.GetUserInfo(userId)
+		//返回用户信息
+		statusMsg := "get user info success"
+		return RequestEntity.UserInfoBack{
+			StatusCode: 0,
+			StatusMsg:  &statusMsg,
+			User:       user,
+		}
+
+	} else {
+
+		//获取用户信息
+		user, err := MUserDaoImpl.GetUserById(userId)
+		if err != nil {
+			statusMsg := "get user info failed"
+			Log.ErrorLogWithoutPanic(statusMsg, err)
+			return RequestEntity.UserInfoBack{
+				StatusCode: 1,
+				StatusMsg:  &statusMsg,
+				User:       nil,
+			}
+		}
+
+		//返回用户信息
+		statusMsg := "get user info success"
+		userInfoBack := RequestEntity.UserInfoBack{
+			StatusCode: 0,
+			StatusMsg:  &statusMsg,
+			User:       user,
+		}
+
+		//向缓存中新增user信息
+		_ = RUserDaoImpl.AddUserInfo(user)
+
+		return userInfoBack
+
 	}
-	return userInfoBack
 }

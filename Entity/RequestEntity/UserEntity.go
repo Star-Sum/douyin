@@ -1,5 +1,7 @@
 package RequestEntity
 
+import "encoding/json"
+
 // RegisterRequest 注册请求输入结构体
 type RegisterRequest struct {
 	Password string `json:"password"` // 密码，最长32个字符
@@ -40,6 +42,15 @@ type User struct {
 	Signature       string `json:"signature"`        // 个人简介
 	TotalFavorited  string `json:"total_favorited"`  // 获赞数量
 	WorkCount       int64  `json:"work_count"`       // 作品数
+}
+
+func (u *User) MarshalBinary() (data []byte, err error) {
+	return json.Marshal(u)
+}
+
+func (u *User) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, u)
+
 }
 
 // LoginRequest 登录请求输入结构体
