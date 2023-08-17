@@ -31,17 +31,17 @@ type UserInfoBack struct {
 
 // User 具体用户信息
 type User struct {
-	Avatar          string `json:"avatar"`           // 用户头像
-	BackgroundImage string `json:"background_image"` // 用户个人页顶部大图
-	FavoriteCount   int64  `json:"favorite_count"`   // 喜欢数
-	FollowCount     int64  `json:"follow_count"`     // 关注总数
-	FollowerCount   int64  `json:"follower_count"`   // 粉丝总数
-	ID              int64  `json:"id"`               // 用户id
-	IsFollow        bool   `json:"is_follow"`        // true-已关注，false-未关注
-	Name            string `json:"name"`             // 用户名称
-	Signature       string `json:"signature"`        // 个人简介
-	TotalFavorited  string `json:"total_favorited"`  // 获赞数量
-	WorkCount       int64  `json:"work_count"`       // 作品数
+	Avatar          string `redis:"avatar" json:"avatar"`                     // 用户头像
+	BackgroundImage string `redis:"background_image" json:"background_image"` // 用户个人页顶部大图
+	FavoriteCount   int64  `redis:"favorite_count" json:"favorite_count"`     // 喜欢数
+	FollowCount     int64  `redis:"follow_count" json:"follow_count"`         // 关注总数
+	FollowerCount   int64  `redis:"follower_count" json:"follower_count"`     // 粉丝总数
+	ID              int64  `redis:"id" json:"id"`                             // 用户id
+	IsFollow        bool   `redis:"is_follow" json:"is_follow"`               // true-已关注，false-未关注
+	Name            string `redis:"name" json:"name"`                         // 用户名称
+	Signature       string `redis:"signature" json:"signature"`               // 个人简介
+	TotalFavorited  int64  `redis:"total_favorited" json:"total_favorited"`   // 获赞数量
+	WorkCount       int64  `redis:"work_count" json:"work_count"`             // 作品数
 }
 
 func (u *User) MarshalBinary() (data []byte, err error) {

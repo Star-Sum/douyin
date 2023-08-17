@@ -4,7 +4,6 @@ import (
 	"context"
 	"douyin/Entity/RequestEntity"
 	"strconv"
-	"time"
 )
 
 type UserDao interface {
@@ -20,6 +19,12 @@ type UserDao interface {
 
 	// GetUserInfo 从redis缓存中获取user的信息
 	GetUserInfo(userId int64) *RequestEntity.User
+
+	// IncrementFields 使user中fields字段加一
+	IncrementFields(userId int64, fields string) error
+
+	// DecrementField 使user中fields字段减一
+	DecrementField(userId int64, fields string) error
 }
 
 type UserDaoImpl struct {
@@ -27,7 +32,7 @@ type UserDaoImpl struct {
 }
 
 func (u *UserDaoImpl) Exists(userId int64) (bool, error) {
-	key := "userInfo_" + strconv.FormatInt(userId, 10)
+	key := "userInfo:user_" + strconv.FormatInt(userId, 10)
 	result, err := redisHandler.Exists(u.Ctx, key).Result()
 	if err != nil {
 		return false, err
@@ -36,8 +41,8 @@ func (u *UserDaoImpl) Exists(userId int64) (bool, error) {
 }
 
 func (u *UserDaoImpl) AddUserInfo(user *RequestEntity.User) error {
-	key := "userInfo_" + strconv.FormatInt(user.ID, 10)
-	err := redisHandler.Set(u.Ctx, key, user, time.Hour).Err()
+	key := "userInfo:user_" + strconv.FormatInt(user.ID, 10)
+	err := redisHandler.HMSet(u.Ctx, key, *user).Err()
 	if err != nil {
 		return err
 	}
@@ -45,19 +50,38 @@ func (u *UserDaoImpl) AddUserInfo(user *RequestEntity.User) error {
 }
 
 func (u *UserDaoImpl) RemoveUserInfo(userId int64) error {
-	key := "userInfo_" + strconv.FormatInt(userId, 10)
+	key := "userInfo:user_" + strconv.FormatInt(userId, 10)
 	err := redisHandler.Del(u.Ctx, key).Err()
 	if err != nil {
 		return err
 	}
 	return nil
 }
+
 func (u *UserDaoImpl) GetUserInfo(userId int64) *RequestEntity.User {
-	key := "userInfo_" + strconv.FormatInt(userId, 10)
+	key := "userInfo:user_" + strconv.FormatInt(userId, 10)
 	user := &RequestEntity.User{}
-	err := redisHandler.Get(u.Ctx, key).Scan(user)
+	err := redisHandler.HGetAll(u.Ctx, key).Scan(user)
 	if err != nil {
 		return nil
 	}
 	return user
+}
+
+func (u *UserDaoImpl) IncrementFields(userId int64, fields string) error {
+	key := "userInfo:user_" + strconv.FormatInt(userId, 10)
+	_, err := redisHandler.HIncrBy(u.Ctx, key, fields, 1).Result()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *UserDaoImpl) DecrementField(userId int64, fields string) error {
+	key := "userInfo:user_" + strconv.FormatInt(userId, 10)
+	_, err := redisHandler.HIncrBy(u.Ctx, key, fields, -1).Result()
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -118,6 +118,7 @@ func UserInfoProcess(request RequestEntity.UserInfoRequest) RequestEntity.UserIn
 	if exists {
 
 		user := RUserDaoImpl.GetUserInfo(userId)
+
 		//返回用户信息
 		statusMsg := "get user info success"
 		return RequestEntity.UserInfoBack{
@@ -149,7 +150,12 @@ func UserInfoProcess(request RequestEntity.UserInfoRequest) RequestEntity.UserIn
 		}
 
 		//向缓存中新增user信息
-		_ = RUserDaoImpl.AddUserInfo(user)
+		defer func() {
+			err = RUserDaoImpl.AddUserInfo(user)
+			if err != nil {
+				Log.ErrorLogWithoutPanic("向redis中新增user信息失败", err)
+			}
+		}()
 
 		return userInfoBack
 

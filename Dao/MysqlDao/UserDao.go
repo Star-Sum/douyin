@@ -21,6 +21,10 @@ type UserDao interface {
 
 	// GetUserIdByUsernameANDPassword 根据用户名和密码获取userId
 	GetUserIdByUsernameANDPassword(username, password string) (*int64, error)
+
+	IncrementFields(userId int64, fields string) error
+
+	DecrementField(userId int64, fields string) error
 }
 type UserDaoImpl struct {
 }
@@ -115,4 +119,23 @@ func (u *UserDaoImpl) GetUserIdByUsernameANDPassword(username, password string) 
 	}
 
 	return &users[0].UserID, nil
+}
+
+func (u *UserDaoImpl) IncrementFields(userId int64, fields string) error {
+
+	if err := mysqldb.Model(&TableEntity.UserInfo{}).
+		Where("id = ?", userId).
+		Update(fields, gorm.Expr(fields+" + 1")).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *UserDaoImpl) DecrementField(userId int64, fields string) error {
+	if err := mysqldb.Model(&TableEntity.UserInfo{}).
+		Where("id = ?", userId).
+		Update(fields, gorm.Expr(fields+" - 1")).Error; err != nil {
+		return err
+	}
+	return nil
 }
