@@ -8,14 +8,14 @@ type FeedRequest struct {
 
 // FeedBack Feed流返回信息
 type FeedBack struct {
-	NextTime   *int64        `json:"next_time"`   // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
-	StatusCode int64         `json:"status_code"` // 状态码，0-成功，其他值-失败
-	StatusMsg  *string       `json:"status_msg"`  // 返回状态描述
-	VideoList  []VideRequest `json:"video_list"`  // 视频列表
+	NextTime   *int64         `json:"next_time"`   // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
+	StatusCode int64          `json:"status_code"` // 状态码，0-成功，其他值-失败
+	StatusMsg  *string        `json:"status_msg"`  // 返回状态描述
+	VideoList  []VedioRequest `json:"video_list"`  // 视频列表
 }
 
-// VideRequest 视频具体访问信息
-type VideRequest struct {
+// VedioRequest 视频具体访问信息
+type VedioRequest struct {
 	Author        AuthorUser `json:"author"`         // 视频作者信息
 	CommentCount  int64      `json:"comment_count"`  // 视频的评论总数
 	CoverURL      string     `json:"cover_url"`      // 视频封面地址

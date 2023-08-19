@@ -13,9 +13,9 @@ func LikeImp(request RequestEntity.LikeRequest) RequestEntity.LikeBack {
 	return likeBack
 }
 
-func LikeListImp(request RequestEntity.LikeListRequest) RequestEntity.VideRequest {
+func LikeListImp(request RequestEntity.LikeListRequest) RequestEntity.VedioRequest {
 	var (
-		likeBack RequestEntity.VideRequest
+		likeBack RequestEntity.VedioRequest
 	)
 	likeBack = Service.LikeListProcess(request)
 	return likeBack

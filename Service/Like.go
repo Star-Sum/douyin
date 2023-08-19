@@ -9,9 +9,9 @@ func LikeProcess(request RequestEntity.LikeRequest) RequestEntity.LikeBack {
 	return likeBack
 }
 
-func LikeListProcess(request RequestEntity.LikeListRequest) RequestEntity.VideRequest {
+func LikeListProcess(request RequestEntity.LikeListRequest) RequestEntity.VedioRequest {
 	var (
-		likeListBack RequestEntity.VideRequest
+		likeListBack RequestEntity.VedioRequest
 	)
 	return likeListBack
 }

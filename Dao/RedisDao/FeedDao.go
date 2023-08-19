@@ -1,1 +1,5 @@
 package RedisDao
+
+func GetVedioList() {
+
+}

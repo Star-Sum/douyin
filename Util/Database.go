@@ -68,7 +68,7 @@ func InitMysqlDb() *gorm.DB {
 	Log.NormalLog("Successfully obtained Mysql database settings!", err)
 	mysqlConf = config.Mysql
 	// 将数据库信息封装成可以识别的模式字符串
-	mysqlInfoString = fmt.Sprintf("%s:%s@%s(%s:%d)/%s",
+	mysqlInfoString = fmt.Sprintf("%s:%s@%s(%s:%d)/%s?parseTime=true",
 		mysqlConf.Username, mysqlConf.Password, mysqlConf.Protocol, mysqlConf.Url, mysqlConf.Port,
 		mysqlConf.Dbname)
 	mysqlDb, err := sql.Open("mysql", mysqlInfoString)

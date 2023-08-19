@@ -27,6 +27,7 @@ func NetServerStartup() {
 			latestTime string
 			token      string
 		)
+
 		latestTime = c.Query("latest_time")
 		token = c.Query("token")
 		request.LatestTime = &latestTime

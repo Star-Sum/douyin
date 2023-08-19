@@ -1,8 +1,10 @@
 package TableEntity
 
+import "time"
+
 type LikeInfo struct {
-	UserID   string // 用户ID
-	VideoID  string // 视频ID
-	LikeID   string `gorm:"primaryKey"` // 点赞行为ID
-	LikeTime string // 点赞时间
+	UserID   int64     // 用户ID
+	VideoID  int64     // 视频ID
+	LikeID   int64     `gorm:"primaryKey"` // 点赞行为ID
+	LikeTime time.Time // 点赞时间
 }
