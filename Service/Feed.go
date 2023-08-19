@@ -53,7 +53,7 @@ func VedioFeedProcess(request RequestEntity.FeedRequest) RequestEntity.FeedBack 
 	// 解析UID,-2表示本处未指定UID
 	UID = -2
 
-	// 如果前端token不为空（处于登录状态）就对token进行解析
+	// 如果前端token不为空（处于登录状态）就对token进行解析，并提取UID
 	if *token != "" {
 		UID, err = Util.ParserToken(*token)
 		if err != nil {
@@ -139,6 +139,10 @@ func VedioListToRequest(vedioList []TableEntity.VedioInfo, UID int64) []RequestE
 			vedioRequest[i].IsFavorite = MLikeDaoImpl.IsFavorite(UID, vedioId)
 			vedioRequest[i].Title = vedioList[i].Title
 			vedioRequest[i].ID = vedioList[i].ID
+			vedioRequest[i].CommentCount = vedioList[i].CommentCount
+			vedioRequest[i].FavoriteCount = vedioList[i].FavoriteCount
+			vedioRequest[i].PlayURL = vedioList[i].PlayURL
+			vedioRequest[i].CoverURL = vedioList[i].CoverURL
 			user, err := MUserDaoImpl.GetUserById(vedioList[i].AuthorID)
 			if err != nil {
 				vedioRequest[i].Author = RequestEntity.AuthorUser{}

@@ -11,3 +11,45 @@
 2023/08/19 23:05:48 Token is valid!
 2023/08/19 23:05:48 Token is valid!
 2023/08/19 23:05:48 Token is valid!
+2023/08/19 23:08:38 Successfully read snowflakeConfig configuration file!
+2023/08/19 23:08:38 Successfully obtained snowflakeConfig settings!
+2023/08/19 23:08:38 Successfully read database configuration file!
+2023/08/19 23:08:38 Successfully obtained Mysql database settings!
+2023/08/19 23:08:38 Database opened successfully!
+2023/08/19 23:08:38 Database:douyin connected successfully！
+2023/08/19 23:08:38 Gorm framework startup successfully!
+2023/08/19 23:08:38 Successfully read database configuration file!
+2023/08/19 23:08:38 Successfully obtained Redis database settings!
+2023/08/19 23:08:38 Redis Connect Success!
+2023/08/19 23:08:38 Create UserInfo Table Success!
+2023/08/19 23:08:38 Create UserAccount Table Success!
+2023/08/19 23:08:38 Create VedioInfo Table Success!
+2023/08/19 23:08:38 Create Comment Table Success!
+2023/08/19 23:08:38 Create Message Table Success!
+2023/08/19 23:08:38 Create Follow Table Success!
+2023/08/19 23:08:38 Create LikeInfo Table Success!
+2023/08/19 23:08:38 Create PublishInfo Table Success!
+2023/08/19 23:08:40 Token is valid!
+2023/08/19 23:08:40 Token is valid!
+2023/08/19 23:08:41 Token is valid!
+2023/08/19 23:10:55 Successfully read snowflakeConfig configuration file!
+2023/08/19 23:10:55 Successfully obtained snowflakeConfig settings!
+2023/08/19 23:10:55 Successfully read database configuration file!
+2023/08/19 23:10:55 Successfully obtained Mysql database settings!
+2023/08/19 23:10:55 Database opened successfully!
+2023/08/19 23:10:55 Database:douyin connected successfully！
+2023/08/19 23:10:55 Gorm framework startup successfully!
+2023/08/19 23:10:55 Successfully read database configuration file!
+2023/08/19 23:10:55 Successfully obtained Redis database settings!
+2023/08/19 23:10:55 Redis Connect Success!
+2023/08/19 23:10:55 Create UserInfo Table Success!
+2023/08/19 23:10:55 Create UserAccount Table Success!
+2023/08/19 23:10:55 Create VedioInfo Table Success!
+2023/08/19 23:10:55 Create Comment Table Success!
+2023/08/19 23:10:55 Create Message Table Success!
+2023/08/19 23:10:55 Create Follow Table Success!
+2023/08/19 23:10:55 Create LikeInfo Table Success!
+2023/08/19 23:10:55 Create PublishInfo Table Success!
+2023/08/19 23:11:02 Token is valid!
+2023/08/19 23:11:02 Token is valid!
+2023/08/19 23:11:02 Token is valid!
