@@ -22,6 +22,8 @@ type UserDao interface {
 	// GetUserIdByUsernameANDPassword 根据用户名和密码获取userId
 	GetUserIdByUsernameANDPassword(username, password string) (*int64, error)
 
+	GetIsFollowByUserIdAndToUserId(userId int64, toUserId int64) (bool, error)
+
 	IncrementFields(userId int64, fields string) error
 
 	DecrementField(userId int64, fields string) error
@@ -119,6 +121,20 @@ func (u *UserDaoImpl) GetUserIdByUsernameANDPassword(username, password string) 
 	}
 
 	return &users[0].UserID, nil
+}
+
+func (u *UserDaoImpl) GetIsFollowByUserIdAndToUserId(userId int64, toUserId int64) (bool, error) {
+	var num int64
+	err := mysqldb.Model(&TableEntity.Follow{}).
+		Where("user_id = ? AND to_user_id = ?", userId, toUserId).
+		Count(&num).Error
+	if err != nil {
+		return false, err
+	}
+	if num > 0 {
+		return true, nil
+	}
+	return false, nil
 }
 
 func (u *UserDaoImpl) IncrementFields(userId int64, fields string) error {

@@ -101,6 +101,8 @@ func UserInfoProcess(request RequestEntity.UserInfoRequest) RequestEntity.UserIn
 	//解析token
 	userId, err := Util.ParserToken(request.Token)
 
+	toUserId, _ := strconv.Atoi(request.UserID)
+
 	//token解析错误，返回
 	if err != nil {
 		statusMsg := "token parse error, please log in and try again"
@@ -112,25 +114,19 @@ func UserInfoProcess(request RequestEntity.UserInfoRequest) RequestEntity.UserIn
 		}
 	}
 
+	var user *RequestEntity.User
+
 	//判断缓存中是否存在用户信息
-	exists, _ := RUserDaoImpl.Exists(userId)
+	exists, _ := RUserDaoImpl.Exists(int64(toUserId))
 
 	if exists {
 
-		user := RUserDaoImpl.GetUserInfo(userId)
-
-		//返回用户信息
-		statusMsg := "get user info success"
-		return RequestEntity.UserInfoBack{
-			StatusCode: 0,
-			StatusMsg:  &statusMsg,
-			User:       user,
-		}
+		user = RUserDaoImpl.GetUserInfo(int64(toUserId))
 
 	} else {
 
 		//获取用户信息
-		user, err := MUserDaoImpl.GetUserById(userId)
+		user, err = MUserDaoImpl.GetUserById(int64(toUserId))
 		if err != nil {
 			statusMsg := "get user info failed"
 			Log.ErrorLogWithoutPanic(statusMsg, err)
@@ -141,14 +137,6 @@ func UserInfoProcess(request RequestEntity.UserInfoRequest) RequestEntity.UserIn
 			}
 		}
 
-		//返回用户信息
-		statusMsg := "get user info success"
-		userInfoBack := RequestEntity.UserInfoBack{
-			StatusCode: 0,
-			StatusMsg:  &statusMsg,
-			User:       user,
-		}
-
 		//向缓存中新增user信息
 		defer func() {
 			err = RUserDaoImpl.AddUserInfo(user)
@@ -157,7 +145,17 @@ func UserInfoProcess(request RequestEntity.UserInfoRequest) RequestEntity.UserIn
 			}
 		}()
 
-		return userInfoBack
+	}
 
+	//判断是否关注
+	isFollow, err := MUserDaoImpl.GetIsFollowByUserIdAndToUserId(userId, int64(toUserId))
+	user.IsFollow = isFollow
+
+	//返回用户信息
+	statusMsg := "get user info success"
+	return RequestEntity.UserInfoBack{
+		StatusCode: 0,
+		StatusMsg:  &statusMsg,
+		User:       user,
 	}
 }
