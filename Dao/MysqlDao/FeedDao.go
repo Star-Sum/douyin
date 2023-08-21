@@ -8,6 +8,7 @@ import (
 
 type FeedDao interface {
 	GetVedioList(timeStamp int64, num int, UID int64) []TableEntity.VedioInfo
+	FindVedioById(vedioId int64) TableEntity.VedioInfo
 }
 
 type FeedDaoImpl struct {
@@ -59,4 +60,18 @@ func (u *FeedDaoImpl) GetVedioList(timeStamp int64, num int, UID int64) []TableE
 		}
 	}
 	return vedioTable
+}
+
+// FindVedioById 根据视频ID查找视频信息
+func (u *FeedDaoImpl) FindVedioById(vedioId int64) TableEntity.VedioInfo {
+	var (
+		vedioInfo TableEntity.VedioInfo
+	)
+	err := mysqldb.Model(TableEntity.VedioInfo{}).
+		Where("id =?", vedioId).Find(&vedioInfo).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Vedio Info Search Error!", err)
+		return TableEntity.VedioInfo{}
+	}
+	return vedioInfo
 }
