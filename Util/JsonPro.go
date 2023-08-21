@@ -6,14 +6,14 @@ import (
 )
 
 // JsonUnmarshal 将json输出为结构体
-func JsonUnmarshal(data []byte, targetElem any) (any, error) {
+func JsonUnmarshal(data []byte, targetElem any) error {
 	err := json.Unmarshal(data, &targetElem)
 	if err != nil {
 		Log.ErrorLogWithoutPanic("JSON parsing failed!", err)
-		return nil, err
+		return err
 	}
 	Log.NormalLog("JSON parsing successful!", err)
-	return targetElem, err
+	return err
 }
 
 // JsonMarshal 将结构体输出为json

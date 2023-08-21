@@ -1,7 +1,9 @@
 package Service
 
 import (
+	"context"
 	"douyin/Dao/MysqlDao"
+	"douyin/Dao/RedisDao"
 	"douyin/Entity/RequestEntity"
 	"douyin/Entity/TableEntity"
 	"douyin/Log"
@@ -13,6 +15,8 @@ import (
 var (
 	MLikeDaoImpl MysqlDao.LikeDao = &MysqlDao.LikeDaos{}
 	MFeedDaoImpl MysqlDao.FeedDao = &MysqlDao.FeedDaoImpl{}
+	RFeedDaoImpl RedisDao.FeedDao = &RedisDao.FeedDaoImpl{
+		Ctx: context.Background()}
 )
 
 func VedioFeedProcess(request RequestEntity.FeedRequest) RequestEntity.FeedBack {
@@ -52,7 +56,6 @@ func VedioFeedProcess(request RequestEntity.FeedRequest) RequestEntity.FeedBack 
 
 	// 解析UID,-2表示本处未指定UID
 	UID = -2
-
 	// 如果前端token不为空（处于登录状态）就对token进行解析，并提取UID
 	if *token != "" {
 		UID, err = Util.ParserToken(*token)
@@ -67,11 +70,26 @@ func VedioFeedProcess(request RequestEntity.FeedRequest) RequestEntity.FeedBack 
 		}
 	}
 
-	// 根据UID和时间戳抽取数据
+	// 通过UID来确定其关注者的UID
+	//followUID := MysqlDao.FindFocusByUID(UID)
+	//err = RedisDao.BuildFeedList(UID, followUID)
+	if err != nil {
+		nowTime := time.Now().Unix()
+		vedioFeedBack.StatusCode = 1
+		vedioFeedBack.VideoList = nil
+		vedioFeedBack.StatusMsg = &FailedMsg
+		vedioFeedBack.NextTime = &nowTime
+		Log.ErrorLogWithoutPanic("Feed List Build Error!", err)
+		return vedioFeedBack
+	}
 
+	// 根据UID和时间戳抽取数据，首先从redis中抽取
+	vedioList := RFeedDaoImpl.SliceFeedInfo(latestTime, 30, UID)
 	// 如果redis缓存中数据不够就从mysql中抽取
-
-	vedioList := MFeedDaoImpl.GetVedioList(latestTime, 30, UID)
+	if len(vedioList) < 30 {
+		vedioList = MFeedDaoImpl.GetVedioList(latestTime, 30, UID)
+		RFeedDaoImpl.InsertFeedInfo(vedioList)
+	}
 
 	// 可能会返回空列表，此时直接按照错误状况退出
 	if len(vedioList) == 0 {

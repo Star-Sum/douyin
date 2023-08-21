@@ -1,55 +1,144 @@
-2023/08/19 23:03:02 Token is valid!
-2023/08/19 23:03:02 Vedio Find Error!
-2023/08/19 23:04:47 Token is valid!
-2023/08/19 23:04:47 Vedio Find Error!
-2023/08/19 23:05:08 Token is valid!
-2023/08/19 23:05:08 Token is valid!
-2023/08/19 23:05:08 Token is valid!
-2023/08/19 23:05:32 Token is valid!
-2023/08/19 23:05:32 Token is valid!
-2023/08/19 23:05:33 Token is valid!
-2023/08/19 23:05:48 Token is valid!
-2023/08/19 23:05:48 Token is valid!
-2023/08/19 23:05:48 Token is valid!
-2023/08/19 23:08:38 Successfully read snowflakeConfig configuration file!
-2023/08/19 23:08:38 Successfully obtained snowflakeConfig settings!
-2023/08/19 23:08:38 Successfully read database configuration file!
-2023/08/19 23:08:38 Successfully obtained Mysql database settings!
-2023/08/19 23:08:38 Database opened successfully!
-2023/08/19 23:08:38 Database:douyin connected successfully！
-2023/08/19 23:08:38 Gorm framework startup successfully!
-2023/08/19 23:08:38 Successfully read database configuration file!
-2023/08/19 23:08:38 Successfully obtained Redis database settings!
-2023/08/19 23:08:38 Redis Connect Success!
-2023/08/19 23:08:38 Create UserInfo Table Success!
-2023/08/19 23:08:38 Create UserAccount Table Success!
-2023/08/19 23:08:38 Create VedioInfo Table Success!
-2023/08/19 23:08:38 Create Comment Table Success!
-2023/08/19 23:08:38 Create Message Table Success!
-2023/08/19 23:08:38 Create Follow Table Success!
-2023/08/19 23:08:38 Create LikeInfo Table Success!
-2023/08/19 23:08:38 Create PublishInfo Table Success!
-2023/08/19 23:08:40 Token is valid!
-2023/08/19 23:08:40 Token is valid!
-2023/08/19 23:08:41 Token is valid!
-2023/08/19 23:10:55 Successfully read snowflakeConfig configuration file!
-2023/08/19 23:10:55 Successfully obtained snowflakeConfig settings!
-2023/08/19 23:10:55 Successfully read database configuration file!
-2023/08/19 23:10:55 Successfully obtained Mysql database settings!
-2023/08/19 23:10:55 Database opened successfully!
-2023/08/19 23:10:55 Database:douyin connected successfully！
-2023/08/19 23:10:55 Gorm framework startup successfully!
-2023/08/19 23:10:55 Successfully read database configuration file!
-2023/08/19 23:10:55 Successfully obtained Redis database settings!
-2023/08/19 23:10:55 Redis Connect Success!
-2023/08/19 23:10:55 Create UserInfo Table Success!
-2023/08/19 23:10:55 Create UserAccount Table Success!
-2023/08/19 23:10:55 Create VedioInfo Table Success!
-2023/08/19 23:10:55 Create Comment Table Success!
-2023/08/19 23:10:55 Create Message Table Success!
-2023/08/19 23:10:55 Create Follow Table Success!
-2023/08/19 23:10:55 Create LikeInfo Table Success!
-2023/08/19 23:10:55 Create PublishInfo Table Success!
-2023/08/19 23:11:02 Token is valid!
-2023/08/19 23:11:02 Token is valid!
-2023/08/19 23:11:02 Token is valid!
+2023/08/21 00:29:57 Successfully read snowflakeConfig configuration file!
+2023/08/21 00:29:57 Successfully obtained snowflakeConfig settings!
+2023/08/21 00:29:57 Successfully read database configuration file!
+2023/08/21 00:29:57 Successfully obtained Mysql database settings!
+2023/08/21 00:29:57 Database opened successfully!
+2023/08/21 00:29:57 Database:douyin connected successfully！
+2023/08/21 00:29:57 Gorm framework startup successfully!
+2023/08/21 00:29:57 Successfully read database configuration file!
+2023/08/21 00:29:57 Successfully obtained Redis database settings!
+2023/08/21 00:29:57 Redis Connect Success!
+2023/08/21 00:29:57 Create UserInfo Table Success!
+2023/08/21 00:29:57 Create UserAccount Table Success!
+2023/08/21 00:29:57 Create VedioInfo Table Success!
+2023/08/21 00:29:57 Create Comment Table Success!
+2023/08/21 00:29:57 Create Message Table Success!
+2023/08/21 00:29:57 Create Follow Table Success!
+2023/08/21 00:29:57 Create LikeInfo Table Success!
+2023/08/21 00:29:57 Create PublishInfo Table Success!
+2023/08/21 00:29:59 Token is valid!
+2023/08/21 00:29:59 JSON parsing successful!
+2023/08/21 00:29:59 Vedio Find Error!
+2023/08/21 00:30:59 Successfully read snowflakeConfig configuration file!
+2023/08/21 00:30:59 Successfully obtained snowflakeConfig settings!
+2023/08/21 00:30:59 Successfully read database configuration file!
+2023/08/21 00:30:59 Successfully obtained Mysql database settings!
+2023/08/21 00:30:59 Database opened successfully!
+2023/08/21 00:30:59 Database:douyin connected successfully！
+2023/08/21 00:30:59 Gorm framework startup successfully!
+2023/08/21 00:30:59 Successfully read database configuration file!
+2023/08/21 00:30:59 Successfully obtained Redis database settings!
+2023/08/21 00:30:59 Redis Connect Success!
+2023/08/21 00:30:59 Create UserInfo Table Success!
+2023/08/21 00:30:59 Create UserAccount Table Success!
+2023/08/21 00:30:59 Create VedioInfo Table Success!
+2023/08/21 00:30:59 Create Comment Table Success!
+2023/08/21 00:30:59 Create Message Table Success!
+2023/08/21 00:30:59 Create Follow Table Success!
+2023/08/21 00:30:59 Create LikeInfo Table Success!
+2023/08/21 00:30:59 Create PublishInfo Table Success!
+2023/08/21 00:31:02 Token is valid!
+2023/08/21 00:31:02 JSON parsing successful!
+2023/08/21 00:31:02 Vedio Find Error!
+2023/08/21 08:42:34 Successfully read snowflakeConfig configuration file!
+2023/08/21 08:42:34 Successfully obtained snowflakeConfig settings!
+2023/08/21 08:42:34 Successfully read database configuration file!
+2023/08/21 08:42:34 Successfully obtained Mysql database settings!
+2023/08/21 08:42:34 Database opened successfully!
+2023/08/21 08:42:34 Database:douyin connected successfully！
+2023/08/21 08:42:34 Gorm framework startup successfully!
+2023/08/21 08:42:34 Successfully read database configuration file!
+2023/08/21 08:42:34 Successfully obtained Redis database settings!
+2023/08/21 08:42:34 Redis Connect Success!
+2023/08/21 08:42:34 Create UserInfo Table Success!
+2023/08/21 08:42:34 Create UserAccount Table Success!
+2023/08/21 08:42:34 Create VedioInfo Table Success!
+2023/08/21 08:42:34 Create Comment Table Success!
+2023/08/21 08:42:34 Create Message Table Success!
+2023/08/21 08:42:35 Create Follow Table Success!
+2023/08/21 08:42:35 Create LikeInfo Table Success!
+2023/08/21 08:42:35 Create PublishInfo Table Success!
+2023/08/21 08:42:41 Token is valid!
+2023/08/21 08:42:41 Vedio Find Error!
+2023/08/21 08:42:45 Successfully output JSON!
+2023/08/21 08:42:45 Successfully output JSON!
+2023/08/21 08:42:45 Successfully output JSON!
+2023/08/21 08:42:45 Successfully output JSON!
+2023/08/21 08:42:45 Successfully output JSON!
+2023/08/21 08:48:20 JSON parsing successful!
+2023/08/21 08:48:20 JSON parsing successful!
+2023/08/21 08:48:20 JSON parsing successful!
+2023/08/21 08:48:20 JSON parsing successful!
+2023/08/21 08:48:20 JSON parsing successful!
+2023/08/21 08:48:20 Successfully output JSON!
+2023/08/21 08:48:20 Successfully output JSON!
+2023/08/21 08:48:20 Successfully output JSON!
+2023/08/21 08:48:20 Successfully output JSON!
+2023/08/21 08:48:20 Successfully output JSON!
+2023/08/21 10:20:56 Successfully read snowflakeConfig configuration file!
+2023/08/21 10:20:56 Successfully obtained snowflakeConfig settings!
+2023/08/21 10:20:56 Successfully read database configuration file!
+2023/08/21 10:20:56 Successfully obtained Mysql database settings!
+2023/08/21 10:20:56 Database opened successfully!
+2023/08/21 10:20:56 Database:douyin connected successfully！
+2023/08/21 10:20:56 Gorm framework startup successfully!
+2023/08/21 10:20:56 Successfully read database configuration file!
+2023/08/21 10:20:56 Successfully obtained Redis database settings!
+2023/08/21 10:20:56 Redis Connect Success!
+2023/08/21 10:20:56 Create UserInfo Table Success!
+2023/08/21 10:20:56 Create UserAccount Table Success!
+2023/08/21 10:20:56 Create VedioInfo Table Success!
+2023/08/21 10:20:56 Create Comment Table Success!
+2023/08/21 10:20:56 Create Message Table Success!
+2023/08/21 10:20:56 Create Follow Table Success!
+2023/08/21 10:20:56 Create LikeInfo Table Success!
+2023/08/21 10:20:56 Create PublishInfo Table Success!
+2023/08/21 10:29:50 Successfully read snowflakeConfig configuration file!
+2023/08/21 10:29:50 Successfully obtained snowflakeConfig settings!
+2023/08/21 10:29:50 Successfully read database configuration file!
+2023/08/21 10:29:50 Successfully obtained Mysql database settings!
+2023/08/21 10:29:50 Database opened successfully!
+2023/08/21 10:29:50 Database:douyin connected successfully！
+2023/08/21 10:29:50 Gorm framework startup successfully!
+2023/08/21 10:29:50 Successfully read database configuration file!
+2023/08/21 10:29:50 Successfully obtained Redis database settings!
+2023/08/21 10:29:50 Redis Connect Success!
+2023/08/21 10:29:50 Create UserInfo Table Success!
+2023/08/21 10:29:50 Create UserAccount Table Success!
+2023/08/21 10:29:50 Create VedioInfo Table Success!
+2023/08/21 10:29:50 Create Comment Table Success!
+2023/08/21 10:29:50 Create Message Table Success!
+2023/08/21 10:29:50 Create Follow Table Success!
+2023/08/21 10:29:50 Create LikeInfo Table Success!
+2023/08/21 10:29:50 Create PublishInfo Table Success!
+2023/08/21 10:29:53 JSON parsing successful!
+2023/08/21 10:29:53 JSON parsing successful!
+2023/08/21 10:29:53 JSON parsing successful!
+2023/08/21 10:29:53 JSON parsing successful!
+2023/08/21 10:29:53 JSON parsing successful!
+2023/08/21 10:29:53 Successfully output JSON!
+2023/08/21 10:29:53 Successfully output JSON!
+2023/08/21 10:29:53 Successfully output JSON!
+2023/08/21 10:29:53 Successfully output JSON!
+2023/08/21 10:29:53 Successfully output JSON!
+2023/08/21 10:30:02 UserLoginProcess
+2023/08/21 10:30:02 Token created successfully!
+2023/08/21 10:30:02 user login success:481253589889716224
+2023/08/21 10:30:02 UserInfoProcess
+2023/08/21 10:30:02 Token is valid!
+2023/08/21 10:30:08 Token is valid!
+2023/08/21 10:30:08 JSON parsing successful!
+2023/08/21 10:30:08 Successfully output JSON!
+2023/08/21 10:30:08 Successfully output JSON!
+2023/08/21 10:30:08 Token is valid!
+2023/08/21 10:30:08 JSON parsing successful!
+2023/08/21 10:30:08 Successfully output JSON!
+2023/08/21 10:30:08 Successfully output JSON!
+2023/08/21 10:30:10 Token is valid!
+2023/08/21 10:30:10 JSON parsing successful!
+2023/08/21 10:30:10 Successfully output JSON!
+2023/08/21 10:30:10 Successfully output JSON!
+2023/08/21 10:30:14 Token is valid!
+2023/08/21 10:30:14 JSON parsing successful!
+2023/08/21 10:30:14 Successfully output JSON!
+2023/08/21 10:30:14 Successfully output JSON!

@@ -5,7 +5,7 @@ import (
 )
 
 type Follow struct {
-	ID       string    `gorm:"primaryKey"` // 关注操作ID
+	ID       int64     `gorm:"primaryKey;AUTO_INCREMENT"` // 关注操作ID
 	UserID   string    // 关注者ID
 	ToUserID string    // 被关注者ID
 	Time     time.Time // 关注时间

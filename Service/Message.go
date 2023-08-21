@@ -153,7 +153,7 @@ func MessageProcess(request RequestEntity.MessageRequest) RequestEntity.MessageB
 	return messageBack
 }
 
-// 获取fromUserID和toUserID互发的消息
+// GetMessageList 获取fromUserID和toUserID互发的消息
 func GetMessageList(fromUserID int64, toUserID int64) ([]RequestEntity.Message, error) {
 	// 先获取自己发给对方的消息列表
 	fromMessageList, err := RMessageDaoImpl.GetMessageList(fromUserID, toUserID)
