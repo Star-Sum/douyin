@@ -13,25 +13,25 @@ func FocusImp(request RequestEntity.FocusRequest) RequestEntity.FocusBack {
 	return focusBack
 }
 
-func FocusListImp(request RequestEntity.UserInfoRequest) RequestEntity.FocusBack {
+func FocusListImp(request RequestEntity.UserInfoRequest) RequestEntity.FocusListBack {
 	var (
-		focusListBack RequestEntity.FocusBack
+		focusListBack RequestEntity.FocusListBack
 	)
 	focusListBack = Service.FocusListProcess(request)
 	return focusListBack
 }
 
-func FanListImp(request RequestEntity.UserInfoRequest) RequestEntity.FanListBack {
+func FanListImp(request RequestEntity.UserInfoRequest) RequestEntity.FansListBack {
 	var (
-		fanListBack RequestEntity.FanListBack
+		fanListBack RequestEntity.FansListBack
 	)
 	fanListBack = Service.FanListProcess(request)
 	return fanListBack
 }
 
-func FriendListImp(request RequestEntity.UserInfoRequest) RequestEntity.FanListBack {
+func FriendListImp(request RequestEntity.UserInfoRequest) RequestEntity.FriendsListBack {
 	var (
-		fanListBack RequestEntity.FanListBack
+		fanListBack RequestEntity.FriendsListBack
 	)
 	fanListBack = Service.FriendListProcess(request)
 	return fanListBack

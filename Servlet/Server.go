@@ -131,6 +131,7 @@ func NetServerStartup() {
 	r.POST("/douyin/relation/action/", func(c *gin.Context) {
 		var request RequestEntity.FocusRequest
 		request.Token = c.Query("token")
+		request.UserId = c.Query("user_id")
 		request.ToUserID = c.Query("to_user_id")
 		request.ActionType = c.Query("action_type")
 		c.JSON(http.StatusOK, Controller.FocusImp(request))
