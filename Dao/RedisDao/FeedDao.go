@@ -6,7 +6,6 @@ import (
 	"douyin/Entity/TableEntity"
 	"douyin/Log"
 	"douyin/Util"
-	"fmt"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm/utils"
 	"strconv"
@@ -22,7 +21,11 @@ type FeedDaoImpl struct {
 	Ctx context.Context
 }
 
-// InsertFeedInfo 将每条信息都推送到粉丝手上
+var (
+	MFeedDaoImpl MysqlDao.FeedDao = &MysqlDao.FeedDaoImpl{}
+)
+
+// InsertFeedInfo 将每条信息ID都推送到粉丝手上
 func (u *FeedDaoImpl) InsertFeedInfo(vedioInfo []TableEntity.VedioInfo) {
 	for i := 0; i < len(vedioInfo); i++ {
 		stringInfo, err := Util.JsonMarshal(vedioInfo[i])
@@ -31,7 +34,7 @@ func (u *FeedDaoImpl) InsertFeedInfo(vedioInfo []TableEntity.VedioInfo) {
 		err = redisHandler.ZAdd(u.Ctx, stringKey, redis.Z{
 			// 以时间戳（时间先后顺序）作为评判标准
 			Score: float64(vedioInfo[i].Timestamp.Unix()),
-			// 传入结构体
+			// 传入ID
 			Member: stringInfo,
 		}).Err()
 		if err != nil {
@@ -44,7 +47,7 @@ func (u *FeedDaoImpl) InsertFeedInfo(vedioInfo []TableEntity.VedioInfo) {
 			err = redisHandler.ZAdd(u.Ctx, stringKey, redis.Z{
 				// 以时间戳（时间先后顺序）作为评判标准
 				Score: float64(vedioInfo[i].Timestamp.Unix()),
-				// 传入结构体
+				// 传入ID
 				Member: stringInfo,
 			}).Err()
 			if err != nil {
@@ -58,7 +61,7 @@ func (u *FeedDaoImpl) InsertFeedInfo(vedioInfo []TableEntity.VedioInfo) {
 func (u *FeedDaoImpl) SliceFeedInfo(timeStamp int64, num int, UID int64) []TableEntity.VedioInfo {
 	var (
 		vedioInfo []TableEntity.VedioInfo
-		midInfo   TableEntity.VedioInfo
+		vedioList TableEntity.VedioInfo
 	)
 	stringKey := "feed:" + utils.ToString(UID)
 	scoreList, err := redisHandler.ZRevRangeByScoreWithScores(u.Ctx, stringKey, &redis.ZRangeBy{
@@ -76,17 +79,16 @@ func (u *FeedDaoImpl) SliceFeedInfo(timeStamp int64, num int, UID int64) []Table
 	for i := 0; i < len(scoreList); i++ {
 		count++
 		byteString := utils.ToString(scoreList[i].Member)
-		err = Util.JsonUnmarshal([]byte(byteString), &midInfo)
+		err = Util.JsonUnmarshal([]byte(byteString), &vedioList)
 		if err != nil {
 			return nil
 		}
-		vedioInfo = append(vedioInfo, midInfo)
+		vedioInfo = append(vedioInfo, MFeedDaoImpl.FindVedioById(vedioList.ID))
 		// 数据量大于30后就退出
 		if count > 30 {
 			break
 		}
 	}
-	fmt.Println(vedioInfo)
 	return vedioInfo
 }
 
