@@ -15,6 +15,8 @@ type RelationDao struct {
 	db *sql.DB
 }
 
+// 关注操作进行时在测试中要加入user_id的参数名 ！！！
+
 // 进行关注和取消关注的操作
 func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, ActionType string) (int64, error) {
 	id, _ := Util.MakeUid(Util.Snowflake.DataCenterId, Util.Snowflake.MachineId)
