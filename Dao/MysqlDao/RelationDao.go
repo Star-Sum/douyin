@@ -89,7 +89,7 @@ func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, A
 			}
 			if err := mysqldb.Model(&TableEntity.UserInfo{}).
 				Where("id = ?", toUserId).
-				Update("follower_count", FollowCount-1).Error; err != nil {
+				Update("follower_count", FollowerCount-1).Error; err != nil {
 				return err
 			}
 			// 返回 nil 提交事务
@@ -222,18 +222,21 @@ func (dao *RelationDao) IsExist(ID string) (res bool) {
 }
 
 // 查询该用户与另一用户的关系 true:没关系 false:有关系
-func (dao *RelationDao) FindRelation(userID, toUserID string) (res bool) {
-	var result int64
-	err := mysqldb.Model(&TableEntity.Follow{}).Select("Count(*)").Where("user_id = ? AND to_user_id = ?", userID, toUserID).Scan(&result).Error
-	if err != nil {
-		Log.ErrorLogWithoutPanic("FindRelation error!", err)
+func (dao *RelationDao) FindRelation(userID, toUserID, ActionType string) (res bool) {
+	if ActionType == "1" {
+		var result int64
+		err := mysqldb.Model(&TableEntity.Follow{}).Select("Count(*)").Where("user_id = ? AND to_user_id = ?", userID, toUserID).Scan(&result).Error
+		if err != nil {
+			Log.ErrorLogWithoutPanic("FindRelation error!", err)
+			return false
+		}
+		if result == 0 {
+			return true
+		}
+		Log.ErrorLogWithoutPanic("adding failed!", err)
 		return false
 	}
-	if result == 0 {
-		return true
-	}
-	Log.ErrorLogWithoutPanic("adding failed!", err)
-	return false
+	return true
 }
 
 // FindFocusByUID 根据用户UID查询关注者的UID

@@ -25,7 +25,7 @@ func FocusProcess(request RequestEntity.FocusRequest) RequestEntity.FocusBack {
 			StatusMsg:  "get focus failed,the user not exists",
 		}
 	}
-	if !MRelationDaoImpl.FindRelation(request.UserId, request.ToUserID) {
+	if !MRelationDaoImpl.FindRelation(request.UserId, request.ToUserID, request.ActionType) {
 		return RequestEntity.FocusBack{
 			StatusCode: 0,
 			StatusMsg:  "get focus failed,Already exists relationship",
