@@ -26,6 +26,7 @@ func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, A
 		ToUserID: toUserId,
 		Time:     time,
 	}
+
 	if ActionType == "1" {
 		//开启事务
 		err := mysqldb.Transaction(func(tx *gorm.DB) error {
@@ -48,7 +49,7 @@ func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, A
 			//更新粉丝列表
 			var FollowerCount int64
 			err2 := mysqldb.Model(&TableEntity.UserInfo{}).Select("follower_count").Where("id = ? ", toUserId).Scan(&FollowerCount).Error
-			if err != nil {
+			if err2 != nil {
 				return err2
 			}
 			if err := mysqldb.Model(&TableEntity.UserInfo{}).
@@ -203,6 +204,38 @@ func (dao *RelationDao) GetFriends(userID string) ([][]RequestEntity.User, error
 	return user, nil
 }
 
+// 查询该用户是否存在,0表示存在，1表示不存在
+func (dao *RelationDao) IsExist(ID string) (res bool) {
+	var count int64
+	err := mysqldb.Model(&TableEntity.UserInfo{}).Select("Count(*)").Where("id = ?", ID).Scan(&count).Error
+	//"SELECT COUNT(*) FROM users WHERE id = ?", ID
+	if err != nil {
+		Log.ErrorLogWithoutPanic("GetUserInfo failed!", err)
+		return false
+	}
+
+	if count > 0 {
+		return true
+	}
+	Log.ErrorLogWithoutPanic("The user does not exist!", err)
+	return false
+}
+
+// 查询该用户与另一用户的关系 true:没关系 false:有关系
+func (dao *RelationDao) FindRelation(userID, toUserID string) (res bool) {
+	var result int64
+	err := mysqldb.Model(&TableEntity.Follow{}).Select("Count(*)").Where("user_id = ? AND to_user_id = ?", userID, toUserID).Scan(&result).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("FindRelation error!", err)
+		return false
+	}
+	if result == 0 {
+		return true
+	}
+	Log.ErrorLogWithoutPanic("adding failed!", err)
+	return false
+}
+
 // FindFocusByUID 根据用户UID查询关注者的UID
 func FindFocusByUID(UID int64) []int64 {
 	var (
@@ -240,13 +273,4 @@ func FindFansByUID(UID int64) []int64 {
 		return nil
 	}
 	return followUid
-}
-func (dao *RelationDao) IncrementFields(userID string, fields int64) error {
-
-	if err := mysqldb.Model(&TableEntity.UserInfo{}).
-		Where("id = ?", userID).
-		Update("follow_count", fields+1).Error; err != nil {
-		return err
-	}
-	return nil
 }

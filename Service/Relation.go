@@ -18,7 +18,19 @@ var (
 )
 
 func FocusProcess(request RequestEntity.FocusRequest) RequestEntity.FocusBack {
-
+	//关注之前首先进行判断，查看该用户是否存在
+	if !MRelationDaoImpl.IsExist(request.UserId) || !MRelationDaoImpl.IsExist(request.ToUserID) {
+		return RequestEntity.FocusBack{
+			StatusCode: 0,
+			StatusMsg:  "get focus failed,the user not exists",
+		}
+	}
+	if !MRelationDaoImpl.FindRelation(request.UserId, request.ToUserID) {
+		return RequestEntity.FocusBack{
+			StatusCode: 0,
+			StatusMsg:  "get focus failed,Already exists relationship",
+		}
+	}
 	Log.NormalLog("FocusProcess", nil)
 	var now = time.Now()
 	addFocus, err := MRelationDaoImpl.Follow(request.UserId, request.ToUserID, now, request.ActionType)
