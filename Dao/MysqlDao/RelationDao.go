@@ -25,9 +25,33 @@ func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, A
 		Time:     time,
 	}
 	if ActionType == "1" {
+		//开启事务
 		err := mysqldb.Transaction(func(tx *gorm.DB) error {
+			//创建新的关注记录
 			if err := tx.Create(follow).Error; err != nil {
 				// 返回任何错误都会回滚事务
+				return err
+			}
+			//更新关注列表
+			var FollowCount int64
+			err := mysqldb.Model(&TableEntity.UserInfo{}).Select("follow_count").Where("id = ? ", userID).Scan(&FollowCount).Error
+			if err != nil {
+				return err
+			}
+			if err := mysqldb.Model(&TableEntity.UserInfo{}).
+				Where("id = ?", userID).
+				Update("follow_count", FollowCount+1).Error; err != nil {
+				return err
+			}
+			//更新粉丝列表
+			var FollowerCount int64
+			err2 := mysqldb.Model(&TableEntity.UserInfo{}).Select("follower_count").Where("id = ? ", toUserId).Scan(&FollowerCount).Error
+			if err != nil {
+				return err2
+			}
+			if err := mysqldb.Model(&TableEntity.UserInfo{}).
+				Where("id = ?", toUserId).
+				Update("follower_count", FollowCount+1).Error; err != nil {
 				return err
 			}
 			// 返回 nil 提交事务
@@ -39,8 +63,39 @@ func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, A
 		}
 		return 1, nil
 	} else {
+		//开启事务
+		err := mysqldb.Transaction(func(tx *gorm.DB) error {
+			if err := mysqldb.Model(&TableEntity.Follow{}).Where("user_id = ? AND to_user_id = ?", userID, toUserId).Delete(&TableEntity.Follow{}).Error; err != nil {
+				// 返回任何错误都会回滚事务
+				return err
+			}
+			var FollowCount int64
+			err := mysqldb.Model(&TableEntity.UserInfo{}).Select("follow_count").Where("id = ? ", userID).Scan(&FollowCount).Error
+			if err != nil {
+				return err
+			}
+			if err := mysqldb.Model(&TableEntity.UserInfo{}).
+				Where("id = ?", userID).
+				Update("follow_count", FollowCount-1).Error; err != nil {
+				return err
+			}
+			var FollowerCount int64
+			err2 := mysqldb.Model(&TableEntity.UserInfo{}).Select("follower_count").Where("id = ? ", toUserId).Scan(&FollowerCount).Error
+			if err != nil {
+				return err2
+			}
+			if err := mysqldb.Model(&TableEntity.UserInfo{}).
+				Where("id = ?", toUserId).
+				Update("follower_count", FollowCount-1).Error; err != nil {
+				return err
+			}
+			// 返回 nil 提交事务
+			return nil
+			// 返回 nil 提交事务
+			return nil
+
+		})
 		// 取消关注关系
-		err := mysqldb.Model(&TableEntity.Follow{}).Where("user_id = ? AND to_user_id = ?", userID, toUserId).Delete(&TableEntity.Follow{}).Error
 		if err != nil {
 			Log.ErrorLogWithoutPanic("UnFollow Error!", err)
 			return 0, err
@@ -183,4 +238,13 @@ func FindFansByUID(UID int64) []int64 {
 		return nil
 	}
 	return followUid
+}
+func (dao *RelationDao) IncrementFields(userID string, fields int64) error {
+
+	if err := mysqldb.Model(&TableEntity.UserInfo{}).
+		Where("id = ?", userID).
+		Update("follow_count", fields+1).Error; err != nil {
+		return err
+	}
+	return nil
 }
