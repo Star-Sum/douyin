@@ -6,7 +6,6 @@ import (
 	"douyin/Entity/TableEntity"
 	"douyin/Log"
 	"douyin/Util"
-	"fmt"
 	"gorm.io/gorm"
 	"time"
 )
@@ -20,6 +19,7 @@ type RelationDao struct {
 // 进行关注和取消关注的操作
 func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, ActionType string) (int64, error) {
 	id, _ := Util.MakeUid(Util.Snowflake.DataCenterId, Util.Snowflake.MachineId)
+
 	var follow = &TableEntity.Follow{
 		ID:       id,
 		UserID:   userID,
@@ -186,8 +186,6 @@ func (dao *RelationDao) GetFriends(userID string) ([][]RequestEntity.User, error
 	for _, value := range focus {
 		mp[value] = true
 	}
-	fmt.Println(focus)
-	fmt.Println(fans)
 
 	var user [][]RequestEntity.User
 	for i := 0; i < len(fans); i++ {

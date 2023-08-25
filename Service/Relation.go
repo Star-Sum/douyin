@@ -32,8 +32,11 @@ func FocusProcess(request RequestEntity.FocusRequest) RequestEntity.FocusBack {
 		}
 	}
 	Log.NormalLog("FocusProcess", nil)
-	var now = time.Now()
-	addFocus, err := MRelationDaoImpl.Follow(request.UserId, request.ToUserID, now, request.ActionType)
+	now := time.Now()
+	// 加载"Asia/Shanghai"时区
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	timeNow := now.In(loc)
+	addFocus, err := MRelationDaoImpl.Follow(request.UserId, request.ToUserID, timeNow, request.ActionType)
 	if err != nil {
 		Log.ErrorLogWithoutPanic("get focus failed", err)
 		return RequestEntity.FocusBack{
