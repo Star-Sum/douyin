@@ -7,23 +7,28 @@ import (
 	"douyin/Log"
 	"douyin/Util"
 	"gorm.io/gorm"
+	"strconv"
 	"time"
 )
 
 type RelationDao struct {
 	db *sql.DB
 }
+type Follow struct {
+	userID   int64
+	toUserID int64
+}
 
 // 关注操作进行时在测试中要加入user_id的参数名 ！！！
 
 // 进行关注和取消关注的操作
-func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, ActionType string) (int64, error) {
+func (dao *RelationDao) Follow(userID int64, toUserId int64, time time.Time, ActionType string) (int64, error) {
 	id, _ := Util.MakeUid(Util.Snowflake.DataCenterId, Util.Snowflake.MachineId)
 
 	var follow = &TableEntity.Follow{
 		ID:       id,
-		UserID:   userID,
-		ToUserID: toUserId,
+		UserID:   strconv.FormatInt(userID, 10),
+		ToUserID: strconv.FormatInt(toUserId, 10),
 		Time:     time,
 	}
 
@@ -54,7 +59,7 @@ func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, A
 			}
 			if err := mysqldb.Model(&TableEntity.UserInfo{}).
 				Where("id = ?", toUserId).
-				Update("follower_count", FollowCount+1).Error; err != nil {
+				Update("follower_count", FollowerCount+1).Error; err != nil {
 				return err
 			}
 			// 返回 nil 提交事务
@@ -94,9 +99,6 @@ func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, A
 			}
 			// 返回 nil 提交事务
 			return nil
-			// 返回 nil 提交事务
-			return nil
-
 		})
 		// 取消关注关系
 		if err != nil {
@@ -108,7 +110,7 @@ func (dao *RelationDao) Follow(userID string, toUserId string, time time.Time, A
 }
 
 // 查询关注列表
-func (dao *RelationDao) GetFollowing(userID string) ([][]RequestEntity.User, error) {
+func (dao *RelationDao) GetFollowing(userID int64) ([][]RequestEntity.User, error) {
 	var focus []string
 	err := mysqldb.Model(&TableEntity.Follow{}).
 		Select("to_user_id").
@@ -134,7 +136,7 @@ func (dao *RelationDao) GetFollowing(userID string) ([][]RequestEntity.User, err
 }
 
 // 查询粉丝列表
-func (dao *RelationDao) GetFollowers(userID string) ([][]RequestEntity.User, error) {
+func (dao *RelationDao) GetFollowers(userID int64) ([][]RequestEntity.User, error) {
 	var fans []string
 	err := mysqldb.Model(&TableEntity.Follow{}).
 		Select("user_id").
@@ -159,7 +161,7 @@ func (dao *RelationDao) GetFollowers(userID string) ([][]RequestEntity.User, err
 }
 
 // 查询好友列表
-func (dao *RelationDao) GetFriends(userID string) ([][]RequestEntity.User, error) {
+func (dao *RelationDao) GetFriends(userID int64) ([][]RequestEntity.User, error) {
 
 	var focus []string
 	err := mysqldb.Model(&TableEntity.Follow{}).
@@ -203,7 +205,7 @@ func (dao *RelationDao) GetFriends(userID string) ([][]RequestEntity.User, error
 }
 
 // 查询该用户是否存在,0表示存在，1表示不存在
-func (dao *RelationDao) IsExist(ID string) (res bool) {
+func (dao *RelationDao) IsExist(ID int64) (res bool) {
 	var count int64
 	err := mysqldb.Model(&TableEntity.UserInfo{}).Select("Count(*)").Where("id = ?", ID).Scan(&count).Error
 	//"SELECT COUNT(*) FROM users WHERE id = ?", ID
@@ -220,7 +222,7 @@ func (dao *RelationDao) IsExist(ID string) (res bool) {
 }
 
 // 查询该用户与另一用户的关系 true:没关系 false:有关系
-func (dao *RelationDao) FindRelation(userID, toUserID, ActionType string) (res bool) {
+func (dao *RelationDao) FindRelation(userID int64, toUserID int64, ActionType string) (res bool) {
 	if ActionType == "1" {
 		var result int64
 		err := mysqldb.Model(&TableEntity.Follow{}).Select("Count(*)").Where("user_id = ? AND to_user_id = ?", userID, toUserID).Scan(&result).Error
