@@ -42,7 +42,7 @@ func FocusProcess(request RequestEntity.FocusRequest) RequestEntity.FocusBack {
 		}
 	}
 	//每隔3秒将数据写入到mysql中
-	ticker := time.NewTicker(30 * time.Second)
+	ticker := time.NewTicker(10 * time.Second)
 
 	go func() {
 		exists, _ := RRelationDaoImpl.ExistsFollow(request.UserId, request.ToUserID)
@@ -59,7 +59,7 @@ func FocusProcess(request RequestEntity.FocusRequest) RequestEntity.FocusBack {
 			case <-ticker.C:
 				// 从Redis中读取数据
 				var followAll []RedisDao.Follow
-				followAll, _ = RRelationDaoImpl.WriteFollowDataToDatabase()
+				followAll, _ = RRelationDaoImpl.WriteFollowDataToDatabase(userId, ToUserId)
 				for _, follow := range followAll {
 					Log.NormalLog("FocusProcess", nil)
 					now := time.Now()

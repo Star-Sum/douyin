@@ -4,6 +4,7 @@ import (
 	"context"
 	"douyin/Entity/RequestEntity"
 	"encoding/json"
+	"strings"
 
 	"fmt"
 	"strconv"
@@ -178,7 +179,7 @@ func (r *RelationDao) FollowUser(userID, touserID string) error {
 	return nil
 }
 
-func (r *RelationDao) WriteFollowDataToDatabase() ([]Follow, error) {
+func (r *RelationDao) WriteFollowDataToDatabase(userId, toUserId int64) ([]Follow, error) {
 	keys, err := redisHandler.Keys(context.Background(), "Relation:_follow*").Result()
 	if err != nil {
 		panic(err)
@@ -203,7 +204,7 @@ func (r *RelationDao) WriteFollowDataToDatabase() ([]Follow, error) {
 		}
 
 	}
-	keysAll, err := redisHandler.Keys(context.Background(), "Relation:_*").Result()
+	keysAll, err := redisHandler.Keys(context.Background(), "Relation:_follow*").Result()
 	// 清空Redis中的关注数据
 	for _, key := range keysAll {
 		fmt.Println(key)
@@ -213,6 +214,41 @@ func (r *RelationDao) WriteFollowDataToDatabase() ([]Follow, error) {
 			return nil, err
 		}
 	}
+
+	var cursor uint64
+	var keysOther []string
+
+	//扫描所有的redis值
+	for {
+		var err error
+		keysOther, cursor, err = redisHandler.Scan(r.Ctx, cursor, "*", 10).Result()
+		if err != nil {
+			panic(err)
+		}
+		// 遍历匹配到的key
+		for _, key := range keysOther {
+			// 根据特定的id值进行判断
+			if strings.Contains(key, strconv.FormatInt(userId, 10)) {
+				// 删除对应的key
+				err := redisHandler.Del(r.Ctx, key).Err()
+				if err != nil {
+					panic(err)
+				}
+			}
+			if strings.Contains(key, strconv.FormatInt(toUserId, 10)) {
+				// 删除对应的key
+				err := redisHandler.Del(r.Ctx, key).Err()
+				if err != nil {
+					panic(err)
+				}
+			}
+		}
+		// 如果cursor为0，表示遍历完成
+		if cursor == 0 {
+			break
+		}
+	}
+
 	if err != nil {
 		return nil, err
 	}
