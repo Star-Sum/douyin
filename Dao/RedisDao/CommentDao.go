@@ -1,10 +1,8 @@
 package RedisDao
-<<<<<<< HEAD
-=======
 
 import (
 	"context"
-	"douyin/Entity/RequestEntity"
+	"douyin/Entity/TableEntity"
 	"douyin/Log"
 	"encoding/json"
 	"errors"
@@ -13,15 +11,15 @@ import (
 
 type CommentDao interface {
 	// 从redis缓存中获取视频的评论记录
-	GetCommentList(videoId int64) ([]RequestEntity.Comment, error)
-	SetCommentList(videoId int64, comments []RequestEntity.Comment) error
+	GetCommentList(videoId int64) ([]TableEntity.Comment, error)
+	SetCommentList(videoId int64, comments []TableEntity.Comment) error
 }
 
 type CommentDaoImpl struct {
 	Ctx context.Context
 }
 
-func (c *CommentDaoImpl) GetCommentList(videoId int64) ([]RequestEntity.Comment, error) {
+func (c *CommentDaoImpl) GetCommentList(videoId int64) ([]TableEntity.Comment, error) {
 	key := "Comment:videoId_" + strconv.FormatInt(videoId, 10)
 	commentMap, err := redisHandler.HGetAll(c.Ctx, key).Result()
 	if err != nil {
@@ -33,11 +31,11 @@ func (c *CommentDaoImpl) GetCommentList(videoId int64) ([]RequestEntity.Comment,
 		Log.NormalLog("GetCommentFromRedis: No comment found in Redis.", nil)
 		return nil, errors.New("no Comment found in Redis")
 	}
-	var comments []RequestEntity.Comment
+	var comments []TableEntity.Comment
 
-	//转换为 RequestEntity.Comment 切片
+	//转换为 TableEntity.Comment 切片
 	for _, commentData := range commentMap {
-		var commentSlice []RequestEntity.Comment
+		var commentSlice []TableEntity.Comment
 		if err := json.Unmarshal([]byte(commentData), &commentSlice); err != nil {
 			Log.ErrorLogWithoutPanic("Comment Unmarshal Error for commentDataData: "+commentData, err)
 		} else {
@@ -47,7 +45,7 @@ func (c *CommentDaoImpl) GetCommentList(videoId int64) ([]RequestEntity.Comment,
 	return comments, nil
 }
 
-func (c *CommentDaoImpl) SetCommentList(videoId int64, comments []RequestEntity.Comment) error {
+func (c *CommentDaoImpl) SetCommentList(videoId int64, comments []TableEntity.Comment) error {
 	key := "comments:videoId_" + strconv.FormatInt(videoId, 10)
 
 	// 将 comments 转换为 JSON 字符串
@@ -66,4 +64,3 @@ func (c *CommentDaoImpl) SetCommentList(videoId int64, comments []RequestEntity.
 
 	return nil
 }
->>>>>>> 51633ea (我的第一次提交)

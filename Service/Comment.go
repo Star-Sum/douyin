@@ -1,21 +1,5 @@
 package Service
 
-<<<<<<< HEAD
-import "douyin/Entity/RequestEntity"
-
-func CommentProcess(request RequestEntity.CommentRequest) RequestEntity.CommentBack {
-	var (
-		commentBack RequestEntity.CommentBack
-	)
-	return commentBack
-}
-
-func CommentListProcess(request RequestEntity.CommentListRequest) RequestEntity.CommentListBack {
-	var (
-		commentListBack RequestEntity.CommentListBack
-	)
-	return commentListBack
-=======
 import (
 	"context"
 	"douyin/Dao/MysqlDao"
@@ -55,9 +39,9 @@ func CommentProcess(request RequestEntity.CommentRequest) RequestEntity.CommentB
 	createData := time.Now().Format("2006-01-02 15:04:05")
 	videoid, _ := strconv.ParseInt(request.VideoID, 10, 64)
 	if request.ActionType == "1" {
-		// 添加评论,在这里创建commnet的表
+		// 添加评论,在这里创建commnet的表,同时还需要将TableEntity里的Comment转化成RequestEntity里的Comment
 
-		comment, err := MCommentDaoImpl.InsertComment(content, createData, videoid, userID)
+		Tcomment, err := MCommentDaoImpl.InsertComment(content, createData, videoid, userID)
 		if err != nil {
 			statusMsg := "Comment insert failed"
 			Log.ErrorLogWithPanic("Comment insert failed", err)
@@ -73,7 +57,6 @@ func CommentProcess(request RequestEntity.CommentRequest) RequestEntity.CommentB
 			StatusCode: 0,
 			StatusMsg:  &statusMsg,
 		}
-
 	} else if request.ActionType == "2" {
 		//删除评论
 		commentid, _ := strconv.ParseInt(*request.CommentID, 10, 64)
@@ -129,5 +112,4 @@ func CommentListProcess(request RequestEntity.CommentListRequest) RequestEntity.
 		StatusMsg:   &statusMsg,
 	}
 
->>>>>>> 51633ea (我的第一次提交)
 }
