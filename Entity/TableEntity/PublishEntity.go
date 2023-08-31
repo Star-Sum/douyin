@@ -5,7 +5,7 @@ import (
 )
 
 type PublishInfo struct {
-	UrlRoot string    // 发表视频时间
+	UrlRoot string    // URL路径
 	UseID   int64     // 视频博主ID
 	Time    time.Time // 视频发布时间
 	Title   string    // 视频标题

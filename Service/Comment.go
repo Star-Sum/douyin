@@ -3,6 +3,7 @@ package Service
 import (
 	"context"
 	"douyin/Dao/MysqlDao"
+
 	"douyin/Dao/RedisDao"
 	"douyin/Entity/RequestEntity"
 	"douyin/Log"
@@ -53,7 +54,7 @@ func CommentProcess(request RequestEntity.CommentRequest) RequestEntity.CommentB
 		}
 		statusMsg := "comment success"
 		return RequestEntity.CommentBack{
-			Comment:    &comment,
+			Comment:    &Tcomment,
 			StatusCode: 0,
 			StatusMsg:  &statusMsg,
 		}
@@ -106,8 +107,21 @@ func CommentListProcess(request RequestEntity.CommentListRequest) RequestEntity.
 		}
 	}
 	statusMsg := "get CommentList success"
+	var requestCommentList []RequestEntity.Comment
+	for i := 0; i < len(commentList); i++ {
+		var rComment RequestEntity.Comment
+		rComment.ID = commentList[i].ID
+		user, err := MUserDaoImpl.GetUserById(commentList[i].UserID)
+		if err != nil {
+			user = nil
+		}
+		rComment.User = *user
+		rComment.Content = commentList[i].Content
+		rComment.CreateDate = commentList[i].CreateDate
+		requestCommentList = append(requestCommentList, rComment)
+	}
 	return RequestEntity.CommentListBack{
-		CommentList: commentList,
+		CommentList: requestCommentList,
 		StatusCode:  0,
 		StatusMsg:   &statusMsg,
 	}
