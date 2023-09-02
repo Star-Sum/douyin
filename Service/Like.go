@@ -113,15 +113,18 @@ func LikeListProcess(request RequestEntity.LikeListRequest) []RequestEntity.Vedi
 	)
 
 	// 判断token是否合法，并提取fromUserID
-	UserID, err := Util.ParserToken(request.Token)
-	if err != nil {
-		Log.ErrorLogWithoutPanic("Token Parse Error!", err)
-		return likeListBack
+	if request.Token != "" {
+		_, err := Util.ParserToken(request.Token)
+		if err != nil {
+			Log.ErrorLogWithoutPanic("Token Parse Error!", err)
+			return likeListBack
+		}
 	}
 
 	// 根据id获取点赞过的视频
 
-	likeVideoList, err := MLikeDaoImpl.FavoriteListByUserID(UserID)
+	UID, _ := strconv.ParseInt(request.UserID, 10, 64)
+	likeVideoList, err := MLikeDaoImpl.FavoriteListByUserID(UID)
 	if err != nil {
 		Log.ErrorLogWithoutPanic("database looking for user liked video err!", err)
 		return likeListBack

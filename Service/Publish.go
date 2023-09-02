@@ -12,9 +12,15 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
+	"sort"
 	"strconv"
 	"time"
 )
+
+type SortStruct struct {
+	vRequestInfo RequestEntity.VedioRequest
+	timeStamp    int64
+}
 
 var (
 	MPublishDaoImpl MysqlDao.PublishDao = &MysqlDao.PublishDaoImpl{}
@@ -115,6 +121,8 @@ func PublishListProcess(request RequestEntity.UserInfoRequest) RequestEntity.Pub
 		vedioInfo       []TableEntity.VedioInfo
 		vRequest        []RequestEntity.VedioRequest
 		vRequestInfo    RequestEntity.VedioRequest
+		sortStruct      SortStruct
+		sortStructList  []SortStruct
 	)
 	successMsg := "Vedio Publish Success!"
 	failMsg := "Vedio Publish Fail"
@@ -126,14 +134,14 @@ func PublishListProcess(request RequestEntity.UserInfoRequest) RequestEntity.Pub
 		Log.ErrorLogWithoutPanic("UID Transform Error!", err)
 		return publishListBack
 	}
-	judge, err := Util.TokenJudge(request.Token, uid)
-	if err != nil {
-		Log.ErrorLogWithoutPanic("UID Parse Error!", err)
-		return publishListBack
-	}
-	if !judge {
-		Log.ErrorLogWithoutPanic("UID Judge Error!", err)
-		return publishListBack
+	if request.Token != "" {
+		_, err := Util.ParserToken(request.Token)
+		if err != nil {
+			tokenString := "Token Error!"
+			publishListBack.StatusCode = 1
+			publishListBack.StatusMsg = &tokenString
+			return publishListBack
+		}
 	}
 
 	// 拉取相关用户的投稿视频信息
@@ -152,6 +160,7 @@ func PublishListProcess(request RequestEntity.UserInfoRequest) RequestEntity.Pub
 			publishListBack.StatusMsg = &failMsg
 		}
 		for i := 0; i < len(vInfo); i++ {
+
 			vRequestInfo.ID = vInfo[i].ID
 			vRequestInfo.FavoriteCount = vInfo[i].FavoriteCount
 			vRequestInfo.Title = vInfo[i].Title
@@ -160,7 +169,16 @@ func PublishListProcess(request RequestEntity.UserInfoRequest) RequestEntity.Pub
 			vRequestInfo.CommentCount = vInfo[i].CommentCount
 			vRequestInfo.Author = GetAuthorInfo(vInfo[i].AuthorID)
 			vRequestInfo.IsFavorite = MLikeDaoImpl.IsFavorite(uid, vInfo[i].ID)
-			vRequest = append(vRequest, vRequestInfo)
+
+			sortStruct.vRequestInfo = vRequestInfo
+			sortStruct.timeStamp = vInfo[i].Timestamp.Unix()
+			sortStructList = append(sortStructList, sortStruct)
+		}
+		sort.Slice(sortStructList, func(i, j int) bool {
+			return sortStructList[i].timeStamp > sortStructList[j].timeStamp
+		})
+		for i := 0; i < len(sortStructList); i++ {
+			vRequest = append(vRequest, sortStructList[i].vRequestInfo)
 		}
 	}
 	publishListBack.VideoList = vRequest
