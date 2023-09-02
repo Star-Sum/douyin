@@ -11,7 +11,6 @@ import (
 	"gopkg.in/yaml.v3"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
 	// 这里的下划线表示只使用mysql的init驱动
 	_ "github.com/go-sql-driver/mysql"
 	"os"
@@ -20,7 +19,7 @@ import (
 // MysqlConfig Mysql数据库配置信息，结构体内变量必须大写，yaml中变量必须小写
 type MysqlConfig struct {
 	Url        string `yaml:"url"`
-	Port       int    `yaml:"port"`
+	Port       string `yaml:"port"`
 	Username   string `yaml:"username"`
 	Password   string `yaml:"password"`
 	Dbname     string `yaml:"dbname"`
@@ -28,11 +27,13 @@ type MysqlConfig struct {
 	Charset    string `yaml:"charset"`
 	Parsertime string `yaml:"parsertime"`
 	Loc        string `yaml:"loc"`
+	Env        string `yaml:"env"`
 }
 
 type RedisConfig struct {
 	Url  string `yaml:"url"`
-	Port int    `yaml:"port"`
+	Port string `yaml:"port"`
+	Env  string `yaml:"env"`
 }
 
 // DbConfig 配置信息
@@ -67,8 +68,12 @@ func InitMysqlDb() *gorm.DB {
 	}
 	Log.NormalLog("Successfully obtained Mysql database settings!", err)
 	mysqlConf = config.Mysql
+	if mysqlConf.Env == "1" {
+		mysqlConf.Url = EnvTransfer(mysqlConf.Url)
+		mysqlConf.Port = EnvTransfer(mysqlConf.Port)
+	}
 	// 将数据库信息封装成可以识别的模式字符串
-	mysqlInfoString = fmt.Sprintf("%s:%s@%s(%s:%d)/%s?parseTime=true",
+	mysqlInfoString = fmt.Sprintf("%s:%s@%s(%s:%s)/%s?parseTime=true",
 		mysqlConf.Username, mysqlConf.Password, mysqlConf.Protocol, mysqlConf.Url, mysqlConf.Port,
 		mysqlConf.Dbname)
 	mysqlDb, err := sql.Open("mysql", mysqlInfoString)
@@ -105,7 +110,11 @@ func InitRedisDb() *redis.Client {
 	}
 	Log.NormalLog("Successfully obtained Redis database settings!", err)
 	redisConf = config.Redis
-	addrString := fmt.Sprintf("%s:%d", redisConf.Url, redisConf.Port)
+	if redisConf.Env == "1" {
+		redisConf.Url = EnvTransfer(redisConf.Url)
+		redisConf.Port = EnvTransfer(redisConf.Port)
+	}
+	addrString := fmt.Sprintf("%s:%s", redisConf.Url, redisConf.Port)
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     addrString,
 		Password: "",

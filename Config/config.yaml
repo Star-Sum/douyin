@@ -8,10 +8,12 @@ mysql:
   charset: utf8mb4
   parsetime: true
   loc: local
+  env: 0
 
 redis:
   url: 127.0.0.1
   port: 6379
+  env: 0
 
 dataCenterId: 1
 machineId: 1
