@@ -3,6 +3,7 @@ package RedisDao
 import (
 	"context"
 	"douyin/Entity/RequestEntity"
+	"douyin/Log"
 	"encoding/json"
 	"strings"
 
@@ -14,7 +15,7 @@ type RelationDao struct {
 	Ctx context.Context
 }
 
-// 判断是否存在该缓存
+// ExistsFriend 判断该用户是否存在朋友缓存池
 func (r *RelationDao) ExistsFriend(userId int64) (bool, error) {
 	key := "Relation:_friend" + strconv.FormatInt(userId, 10)
 	result, err := redisHandler.Exists(r.Ctx, key).Result()
@@ -24,7 +25,7 @@ func (r *RelationDao) ExistsFriend(userId int64) (bool, error) {
 	return result > 0, nil
 }
 
-// 判断是否存在该缓存
+// ExistsFans 判断该用户是否存在粉丝缓存池
 func (r *RelationDao) ExistsFans(userId int64) (bool, error) {
 	key := "Relation:_fans" + strconv.FormatInt(userId, 10)
 	result, err := redisHandler.Exists(r.Ctx, key).Result()
@@ -34,7 +35,7 @@ func (r *RelationDao) ExistsFans(userId int64) (bool, error) {
 	return result > 0, nil
 }
 
-// 判断是否存在该缓存
+// ExistsFocus 判断该用户是否存在关注缓存池
 func (r *RelationDao) ExistsFocus(userId int64) (bool, error) {
 	key := "Relation:_focus" + strconv.FormatInt(userId, 10)
 	result, err := redisHandler.Exists(r.Ctx, key).Result()
@@ -44,8 +45,8 @@ func (r *RelationDao) ExistsFocus(userId int64) (bool, error) {
 	return result > 0, nil
 }
 
-// 添加内容到redis中
-func (r *RelationDao) AddFriendRelationInfo(userId int64, user [][]RequestEntity.User) error {
+// AddFriendRelationInfo 添加朋友关系到redis中
+func (r *RelationDao) AddFriendRelationInfo(userId int64, user []RequestEntity.User) error {
 	key := "Relation:_friend" + strconv.FormatInt(userId, 10)
 	data, err := json.Marshal(user)
 	if err != nil {
@@ -58,14 +59,16 @@ func (r *RelationDao) AddFriendRelationInfo(userId int64, user [][]RequestEntity
 	return nil
 }
 
-// 从缓存中查询关系
-func (r *RelationDao) GetFriendRelation(userId int64) [][]RequestEntity.User {
+// GetFriendRelation 从缓存中查询朋友关系
+func (r *RelationDao) GetFriendRelation(userId int64) []RequestEntity.User {
 	key := "Relation:_friend" + strconv.FormatInt(userId, 10)
+
 	result, err := redisHandler.LRange(r.Ctx, key, 0, -1).Result()
 	if err != nil {
-		panic(err)
+		Log.ErrorLogWithoutPanic("Find Friend List Error!", err)
+		return nil
 	}
-	var users [][]RequestEntity.User
+	var users []RequestEntity.User
 	// 遍历获取的结果
 	for _, data := range result {
 		// 反序列化字符串为[][]User类型的数据
@@ -77,8 +80,8 @@ func (r *RelationDao) GetFriendRelation(userId int64) [][]RequestEntity.User {
 	return users
 }
 
-// 添加内容到redis中
-func (r *RelationDao) AddFocusRelationInfo(userId int64, user [][]RequestEntity.User) error {
+// AddFocusRelationInfo 添加关注信息到redis中
+func (r *RelationDao) AddFocusRelationInfo(userId int64, user []RequestEntity.User) error {
 	key := "Relation:_focus" + strconv.FormatInt(userId, 10)
 	data, err := json.Marshal(user)
 	if err != nil {
@@ -92,14 +95,14 @@ func (r *RelationDao) AddFocusRelationInfo(userId int64, user [][]RequestEntity.
 	return nil
 }
 
-// 从缓存中查询关系
-func (r *RelationDao) GetFocusRelation(userId int64) [][]RequestEntity.User {
+// GetFocusRelation 从缓存中查询关注关系
+func (r *RelationDao) GetFocusRelation(userId int64) []RequestEntity.User {
 	key := "Relation:_focus" + strconv.FormatInt(userId, 10)
 	result, err := redisHandler.LRange(r.Ctx, key, 0, -1).Result()
 	if err != nil {
 		panic(err)
 	}
-	var users [][]RequestEntity.User
+	var users []RequestEntity.User
 	// 遍历获取的结果
 	for _, data := range result {
 		// 反序列化字符串为[][]User类型的数据
@@ -111,8 +114,8 @@ func (r *RelationDao) GetFocusRelation(userId int64) [][]RequestEntity.User {
 	return users
 }
 
-// 添加内容到redis中
-func (r *RelationDao) AddFansRelationInfo(userId int64, user [][]RequestEntity.User) error {
+// AddFansRelationInfo 添加粉丝内容到redis中
+func (r *RelationDao) AddFansRelationInfo(userId int64, user []RequestEntity.User) error {
 	key := "Relation:_fans" + strconv.FormatInt(userId, 10)
 	data, err := json.Marshal(user)
 	if err != nil {
@@ -125,14 +128,14 @@ func (r *RelationDao) AddFansRelationInfo(userId int64, user [][]RequestEntity.U
 	return nil
 }
 
-// 从缓存中查询关系
-func (r *RelationDao) GetFansRelation(userId int64) [][]RequestEntity.User {
+// GetFansRelation 从缓存中查询粉丝关系
+func (r *RelationDao) GetFansRelation(userId int64) []RequestEntity.User {
 	key := "Relation:_fans" + strconv.FormatInt(userId, 10)
 	result, err := redisHandler.LRange(r.Ctx, key, 0, -1).Result()
 	if err != nil {
 		panic(err)
 	}
-	var users [][]RequestEntity.User
+	var users []RequestEntity.User
 	// 遍历获取的结果
 	for _, data := range result {
 		// 反序列化字符串为[][]User类型的数据
@@ -149,14 +152,14 @@ type Follow struct {
 	ToUserID int64
 }
 
-// 实现将关注操作的信息先保存到redis中，过一段时间再将redis持久化到数据库中
-func (r *RelationDao) FollowUser(userID, touserID string) error {
-	key := "Relation:_follow" + userID + "to" + touserID
+// FollowUser 实现数据持久化
+func (r *RelationDao) FollowUser(userID, toUserID string) error {
+	key := "Relation:_follow" + userID + "to" + toUserID
 	userId, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
 		return err
 	}
-	toUserId, err := strconv.ParseInt(touserID, 10, 64)
+	toUserId, err := strconv.ParseInt(toUserID, 10, 64)
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package Servlet
 
 import "C"
 import (
+	"context"
 	"douyin/Controller"
 	"douyin/Dao/MysqlDao"
 	"douyin/Dao/RedisDao"
@@ -13,6 +14,10 @@ import (
 	"gorm.io/gorm"
 	"mime/multipart"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 // NetServerStartup 启动前端网络服务
@@ -131,7 +136,6 @@ func NetServerStartup() {
 	r.POST("/douyin/relation/action/", func(c *gin.Context) {
 		var request RequestEntity.FocusRequest
 		request.Token = c.Query("token")
-		request.UserId = c.Query("user_id")
 		request.ToUserID = c.Query("to_user_id")
 		request.ActionType = c.Query("action_type")
 		c.JSON(http.StatusOK, Controller.FocusImp(request))
@@ -183,7 +187,32 @@ func NetServerStartup() {
 	r.Static("/douyin/image", "Resource/Image")
 	r.Static("/douyin/text", "Resource/text")
 	r.Static("/douyin/vedio", "Resource/Vedio")
-	r.Run(":8080")
+
+	s := http.Server{
+		Addr:    ":8080",
+		Handler: r,
+	}
+
+	go func() {
+		if err1 := s.ListenAndServe(); err1 != nil && err1 != http.ErrServerClosed {
+			Log.ErrorLogWithoutPanic("Listen: %s\n", err1)
+		}
+	}()
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	Log.NormalLog("Shutdown Server ...", nil)
+
+	//创建超时上下文，Shutdown可以让未处理的连接在这个时间内关闭
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	//停止HTTP服务器
+	if err := s.Shutdown(ctx); err != nil {
+		Log.ErrorLogWithoutPanic("Server Shutdown:", err)
+	}
+
+	Log.NormalLog("Server Exiting", nil)
 
 }
 

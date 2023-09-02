@@ -3,69 +3,78 @@ package MysqlDao
 import (
 	"douyin/Entity/RequestEntity"
 	"douyin/Entity/TableEntity"
+	"douyin/Log"
 	"douyin/Util"
 	"errors"
 	"log"
 )
 
-// 实现相应的增删查改需求
-// 需要对gorm进行初始化吗？
-// Comment
-// 直接调用定义中的数据结构体
 type CommentDao interface {
 
-	// 发表评论
+	// InsertComment 发表评论
 	InsertComment(content string, createDate string, vedioid int64, userid int64) (RequestEntity.Comment, error)
-	// 删除评论，传入评论id
+	// DeleteComment 删除评论，传入评论id
 	DeleteComment(CommentId int64) error
-	// 获取视频下的评论列表
+	// GetCommentList 获取视频下的评论列表
 	GetCommentList(videoId int64) ([]RequestEntity.Comment, error)
-	// Comment类型转换
-	// Transfer(TcommentList []TableEntity.Comment) ([]RequestEntity.Comment, error)
 }
 
 type CommentDaoImpl struct {
 }
 
-// InsertComment
-// 2、发表评论
-func (c *CommentDaoImpl) InsertComment(content string, createdate string, vedioid int64, userid int64) (RequestEntity.Comment, error) {
-	log.Println("CommentDao-InsertComment: running") //函数已运行
-	//数据库中插入一条评论信息
+// InsertComment content:评论具体内容 createDate:创建时间 vedioId:视频ID userId:发表评论的用户ID
+func (c *CommentDaoImpl) InsertComment(content string, createDate string, vedioId int64,
+	userId int64) (RequestEntity.Comment, error) {
+	// 标识方法已运行
+	Log.NormalLog("CommentDao-InsertComment: running", nil)
 
-	//根据雪花算法生成评论id
-	id, _ := Util.MakeUid(Util.Snowflake.DataCenterId, Util.Snowflake.MachineId)
 	//根据id获取user
-	var user = &RequestEntity.User{}
-	result := mysqldb.Model(&TableEntity.UserInfo{}).Where("id=?", id).First(&user)
-	if result.RowsAffected == 0 { //查询到y
-		log.Println("CommentDao-insertComment: return user is not existed") //函数返回提示错误信息
-	}
-	var Tcomment = TableEntity.Comment{
-		Content:    content,
-		CreateDate: createdate,
-		ID:         id,
-		VedioId:    vedioid,
-		UserID:     userid,
-	}
-	//err := MysqlDb.Model(model.CommentModel{}).Create(&comment).Error
-	var Rcomment = RequestEntity.Comment{
-		Content:    content,
-		CreateDate: createdate,
-		ID:         id,
-		User:       *user,
-	}
-	err := mysqldb.Create(Tcomment).Error
+	var user TableEntity.UserInfo
+	err := mysqldb.Model(&TableEntity.UserInfo{}).Where("id=?", userId).Find(&user).Error
 	if err != nil {
-		log.Println("CommentDao-InsertComment: return create comment failed") //函数返回提示错误信息
-		return Rcomment, err
+		//函数返回提示错误信息
+		Log.ErrorLogWithoutPanic("CommentDao-insertComment: return user is not existed", nil)
 	}
-	log.Println("CommentDao-InsertComment: return success") //函数执行成功，返回正确信息
-	return Rcomment, nil
+
+	// 在表中插入评论信息
+	var tComment = TableEntity.Comment{
+		Content:    content,
+		CreateDate: createDate,
+		VedioId:    vedioId,
+		UserID:     userId,
+	}
+	err = mysqldb.Create(&tComment).Error
+
+	// 制作返回信息
+	var rUser = RequestEntity.User{
+		Avatar:          user.Avatar,
+		BackgroundImage: user.BackgroundImage,
+		FavoriteCount:   user.FavoriteCount,
+		FollowCount:     user.FollowCount,
+		FollowerCount:   user.FollowerCount,
+		ID:              user.ID,
+		IsFollow:        true,
+		Name:            user.Name,
+		Signature:       user.Signature,
+		TotalFavorited:  user.TotalFavorited,
+		WorkCount:       user.WorkCount,
+	}
+	var rComment = RequestEntity.Comment{
+		Content:    content,
+		CreateDate: createDate,
+		User:       rUser,
+	}
+
+	if err != nil {
+		//函数返回提示错误信息
+		Log.ErrorLogWithoutPanic("CommentDao-InsertComment: return create comment failed", err)
+		return rComment, err
+	}
+	Log.NormalLog("CommentDao-InsertComment: return success", nil) //函数执行成功，返回正确信息
+	return rComment, nil
 }
 
-// DeleteComment
-// 3、删除评论，传入评论id
+// DeleteComment 删除评论，传入评论id
 func (c *CommentDaoImpl) DeleteComment(ID int64) error {
 	log.Println("CommentDao-DeleteComment: running") //函数已运行
 	var commentInfo TableEntity.Comment
@@ -113,7 +122,9 @@ func (c *CommentDaoImpl) GetCommentList(videoId int64) ([]RequestEntity.Comment,
 	var TcommentList []TableEntity.Comment
 	// var RcommentList []RequestEntity.Comment
 
-	result := mysqldb.Model(TableEntity.Comment{}).Where("video_id=?", videoId).Order("create_date desc").Find(&TcommentList)
+	result := mysqldb.Model(TableEntity.Comment{}).
+		Where("vedio_id=?", videoId).
+		Order("create_date desc").Find(&TcommentList)
 	// RcommentList, err := Transfer(TcommentList)
 	// 做一个TcommentList -> RcommentList的转换
 	RcommentList := []RequestEntity.Comment{}
@@ -145,4 +156,42 @@ func (c *CommentDaoImpl) GetCommentList(videoId int64) ([]RequestEntity.Comment,
 	}
 	log.Println("CommentDao-GetCommentList: return commentList success") //函数执行成功，返回正确信息
 	return RcommentList, nil
+}
+
+// 个人重写
+
+func (c *CommentDaoImpl) InsertComment1(content string, createDate string, vedioId int64,
+	userId int64) (RequestEntity.Comment, error) {
+	// 标识函数已运行
+	Log.NormalLog("CommentDao-InsertComment: running", nil)
+	//数据库中插入一条评论信息
+
+	//根据雪花算法生成评论id
+	id, _ := Util.MakeUid(Util.Snowflake.DataCenterId, Util.Snowflake.MachineId)
+	//根据id获取user
+	var user = &RequestEntity.User{}
+	result := mysqldb.Model(&TableEntity.UserInfo{}).Where("id=?", id).First(&user)
+	if result.RowsAffected == 0 { //查询到y
+		Log.ErrorLogWithoutPanic("CommentDao-insertComment: return user is not existed", nil) //函数返回提示错误信息
+	}
+	var tComment = TableEntity.Comment{
+		Content:    content,
+		CreateDate: createDate,
+		VedioId:    vedioId,
+		UserID:     userId,
+	}
+	//err := MysqlDb.Model(model.CommentModel{}).Create(&comment).Error
+	var rComment = RequestEntity.Comment{
+		Content:    content,
+		CreateDate: createDate,
+		ID:         id,
+		User:       *user,
+	}
+	err := mysqldb.Create(tComment).Error
+	if err != nil {
+		log.Println("CommentDao-InsertComment: return create comment failed") //函数返回提示错误信息
+		return rComment, err
+	}
+	log.Println("CommentDao-InsertComment: return success") //函数执行成功，返回正确信息
+	return rComment, nil
 }

@@ -19,9 +19,6 @@ var RCommentDaoImpl RedisDao.CommentDao = &RedisDao.CommentDaoImpl{
 }
 
 func CommentProcess(request RequestEntity.CommentRequest) RequestEntity.CommentBack {
-	// var (
-	// 	commentBack RequestEntity.CommentBack
-	// )
 	Log.NormalLog("CommentProcess", nil)
 
 	//解析token
@@ -35,14 +32,21 @@ func CommentProcess(request RequestEntity.CommentRequest) RequestEntity.CommentB
 			StatusMsg:  &statusMsg,
 		}
 	}
-	// var comment RequestEntity.Comment
-	content := *request.CommentText
-	createData := time.Now().Format("2006-01-02 15:04:05")
-	videoid, _ := strconv.ParseInt(request.VideoID, 10, 64)
-	if request.ActionType == "1" {
-		// 添加评论,在这里创建commnet的表,同时还需要将TableEntity里的Comment转化成RequestEntity里的Comment
 
-		Tcomment, err := MCommentDaoImpl.InsertComment(content, createData, videoid, userID)
+	// 获取前端传过来的评论
+	content := request.CommentText
+
+	// 将评论发布时间设置为string
+	createData := time.Now().Format("2006-01-02 15:04:05")
+
+	// 将视频ID转换为int64类型
+	videoId, _ := strconv.ParseInt(request.VideoID, 10, 64)
+
+	// 行为代号为1，添加评论
+	//在这里创建comment的表,同时还需要将TableEntity里的Comment转化成RequestEntity里的Comment
+	if request.ActionType == "1" {
+
+		tComment, err := MCommentDaoImpl.InsertComment(*content, createData, videoId, userID)
 		if err != nil {
 			statusMsg := "Comment insert failed"
 			Log.ErrorLogWithPanic("Comment insert failed", err)
@@ -54,7 +58,7 @@ func CommentProcess(request RequestEntity.CommentRequest) RequestEntity.CommentB
 		}
 		statusMsg := "comment success"
 		return RequestEntity.CommentBack{
-			Comment:    &Tcomment,
+			Comment:    &tComment,
 			StatusCode: 0,
 			StatusMsg:  &statusMsg,
 		}

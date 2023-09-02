@@ -48,7 +48,7 @@ func LikeProcess(request RequestEntity.LikeRequest) RequestEntity.LikeBack {
 		likeBack.StatusCode = 1
 		likeBack.StatusMsg = "Video with the specified ID not found!"
 		// 添加成功log，todo
-		// Log.ErrorLogWithoutPanic("Video with the specified ID not found!")
+		Log.ErrorLogWithoutPanic("Video with the specified ID not found!", nil)
 		return likeBack
 	}
 
@@ -105,7 +105,7 @@ func LikeProcess(request RequestEntity.LikeRequest) RequestEntity.LikeBack {
 
 }
 
-// 请求点赞列表
+// LikeListProcess 请求点赞列表
 func LikeListProcess(request RequestEntity.LikeListRequest) []RequestEntity.VedioRequest {
 	var (
 		likeListBack      []RequestEntity.VedioRequest

@@ -6,6 +6,7 @@ import (
 	"douyin/Dao/RedisDao"
 	"douyin/Entity/RequestEntity"
 	"douyin/Log"
+	"douyin/Util"
 	"fmt"
 	"strconv"
 	"time"
@@ -18,26 +19,36 @@ var (
 	}
 )
 
+// FocusProcess 执行关注操作
 func FocusProcess(request RequestEntity.FocusRequest) RequestEntity.FocusBack {
-	userId, _ := strconv.ParseInt(request.UserId, 10, 64)
+
+	UserId, err := Util.ParserToken(request.Token)
+	if err != nil {
+		Log.ErrorLogWithoutPanic("UID Parse Error!", err)
+		return RequestEntity.FocusBack{StatusCode: 1, StatusMsg: "get focus failed"}
+	}
+	stringUid := strconv.FormatInt(UserId, 10)
+	userId, _ := strconv.ParseInt(stringUid, 10, 64)
 	ToUserId, _ := strconv.ParseInt(request.ToUserID, 10, 64)
+
 	//如果user_id 和to_user_id一样的话报错
 	if userId == ToUserId {
 		return RequestEntity.FocusBack{
-			StatusCode: 0,
+			StatusCode: 1,
 			StatusMsg:  "get focus failed,user can't Focus themselves",
 		}
 	}
+
 	//关注之前首先进行判断，查看该用户是否存在
 	if !MRelationDaoImpl.IsExist(userId) || !MRelationDaoImpl.IsExist(ToUserId) {
 		return RequestEntity.FocusBack{
-			StatusCode: 0,
+			StatusCode: 1,
 			StatusMsg:  "get focus failed,the user not exists",
 		}
 	}
-	if !MRelationDaoImpl.FindRelation(userId, ToUserId, request.ActionType) {
+	if MRelationDaoImpl.FindRelation(userId, ToUserId, request.ActionType) {
 		return RequestEntity.FocusBack{
-			StatusCode: 0,
+			StatusCode: 1,
 			StatusMsg:  "get focus failed,Already exists relationship",
 		}
 	}
@@ -45,11 +56,11 @@ func FocusProcess(request RequestEntity.FocusRequest) RequestEntity.FocusBack {
 	ticker := time.NewTicker(10 * time.Second)
 
 	go func() {
-		exists, _ := RRelationDaoImpl.ExistsFollow(request.UserId, request.ToUserID)
+		exists, _ := RRelationDaoImpl.ExistsFollow(stringUid, request.ToUserID)
 		if exists {
-			fmt.Println("存在")
+			Log.NormalLog("存在", nil)
 		} else {
-			_ = RRelationDaoImpl.FollowUser(request.UserId, request.ToUserID)
+			_ = RRelationDaoImpl.FollowUser(stringUid, request.ToUserID)
 		}
 	}()
 
@@ -66,7 +77,7 @@ func FocusProcess(request RequestEntity.FocusRequest) RequestEntity.FocusBack {
 					// 加载"Asia/Shanghai"时区
 					loc, err := time.LoadLocation("Asia/Shanghai")
 					timeNow := now.In(loc)
-					_, err = MRelationDaoImpl.Follow(follow.UserID, follow.ToUserID, timeNow, request.ActionType)
+					err = MRelationDaoImpl.Follow(follow.UserID, follow.ToUserID, timeNow, request.ActionType)
 					if err != nil {
 						Log.ErrorLogWithoutPanic("get focus failed", err)
 					}
@@ -75,11 +86,12 @@ func FocusProcess(request RequestEntity.FocusRequest) RequestEntity.FocusBack {
 		}
 	}()
 	return RequestEntity.FocusBack{
-		StatusCode: 1,
+		StatusCode: 0,
 		StatusMsg:  "get focus success",
 	}
 }
 
+// FocusListProcess 拉取关注列表
 func FocusListProcess(request RequestEntity.UserInfoRequest) RequestEntity.FocusListBack {
 
 	userId, err := strconv.ParseInt(request.UserID, 10, 64)
@@ -94,7 +106,7 @@ func FocusListProcess(request RequestEntity.UserInfoRequest) RequestEntity.Focus
 		}
 	}
 
-	var FocusList [][]RequestEntity.User
+	var FocusList []RequestEntity.User
 
 	exists, err := RRelationDaoImpl.ExistsFocus(userId)
 	if exists {
@@ -128,8 +140,10 @@ func FocusListProcess(request RequestEntity.UserInfoRequest) RequestEntity.Focus
 		UserList:   FocusList,
 	}
 }
+
+// FanListProcess 拉取粉丝列表
 func FanListProcess(request RequestEntity.UserInfoRequest) RequestEntity.FansListBack {
-	var FanList [][]RequestEntity.User
+	var FanList []RequestEntity.User
 	Log.NormalLog("FanListProcess", nil)
 
 	userId, err := strconv.ParseInt(request.UserID, 10, 64)
@@ -174,12 +188,17 @@ func FanListProcess(request RequestEntity.UserInfoRequest) RequestEntity.FansLis
 	}
 }
 
+// FriendListProcess 拉取朋友列表
 func FriendListProcess(request RequestEntity.UserInfoRequest) RequestEntity.FriendsListBack {
-	var FriendList [][]RequestEntity.User
+	var FriendList []RequestEntity.User
 
 	Log.NormalLog("FriendListProcess", nil)
 	userId, err := strconv.ParseInt(request.UserID, 10, 64)
-	exists, _ := RRelationDaoImpl.ExistsFriend(userId)
+	if err != nil {
+		Log.ErrorLogWithoutPanic("UID Parser Error!", err)
+		return RequestEntity.FriendsListBack{StatusCode: "1", StatusMsg: "UID Error!"}
+	}
+	exists, err := RRelationDaoImpl.ExistsFriend(userId)
 
 	if err != nil {
 		statusMsg := "get friendsList failed"
@@ -191,8 +210,19 @@ func FriendListProcess(request RequestEntity.UserInfoRequest) RequestEntity.Frie
 		}
 	}
 	if exists {
-		fmt.Println("存在")
+		Log.NormalLog("存在", nil)
 		FriendList = RRelationDaoImpl.GetFriendRelation(userId)
+		if len(FriendList) <= 0 {
+			FriendList, err = MRelationDaoImpl.GetFriends(userId)
+			if err != nil {
+				Log.ErrorLogWithoutPanic("Get FriendsList Failed", err)
+				return RequestEntity.FriendsListBack{
+					StatusCode: "1",
+					StatusMsg:  "get friendsList failed",
+					UserList:   nil,
+				}
+			}
+		}
 	} else {
 		//获取用户信息
 		FriendList, err = MRelationDaoImpl.GetFriends(userId)

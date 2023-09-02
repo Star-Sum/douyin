@@ -7,7 +7,8 @@ import (
 )
 
 type FeedDao interface {
-	GetVedioList(timeStamp int64, num int, UID int64) []TableEntity.VedioInfo
+	GetVedioList(timeStamp int64, num int,
+		UID int64, focusList []int64) []TableEntity.VedioInfo
 	FindVedioById(vedioId int64) TableEntity.VedioInfo
 }
 
@@ -17,7 +18,8 @@ type FeedDaoImpl struct {
 // GetVedioList 获取vedio信息列表
 // 基本实现思路是通过UID来获取其关注者发布作品的列表，一次拉取30条
 // 如果没有输入UID，表明现在处于未登录情况，就直接拉取最新的30条数据
-func (u *FeedDaoImpl) GetVedioList(timeStamp int64, num int, UID int64) []TableEntity.VedioInfo {
+func (u *FeedDaoImpl) GetVedioList(timeStamp int64, num int,
+	UID int64, focusList []int64) []TableEntity.VedioInfo {
 	var (
 		vedioTable []TableEntity.VedioInfo
 	)
@@ -44,7 +46,6 @@ func (u *FeedDaoImpl) GetVedioList(timeStamp int64, num int, UID int64) []TableE
 	} else {
 		// 指定UID的情况下查询其关注者最近30条
 		var midInfo []TableEntity.VedioInfo
-		focusList := FindFocusByUID(UID)
 		for i := 0; i < len(focusList); i++ {
 			err := mysqldb.Model(TableEntity.VedioInfo{}).
 				Where("timestamp <= ? AND author_id = ?", stringTime, focusList[i]).Limit(num).

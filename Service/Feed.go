@@ -87,7 +87,11 @@ func VedioFeedProcess(request RequestEntity.FeedRequest) RequestEntity.FeedBack 
 	vedioList := RFeedDaoImpl.SliceFeedInfo(latestTime, 30, UID)
 	// 如果redis缓存中数据不够就从mysql中抽取
 	if len(vedioList) < 30 {
-		vedioList = MFeedDaoImpl.GetVedioList(latestTime, 30, UID)
+		var focusList []int64
+		if UID != -2 {
+			focusList = MRelationDaoImpl.FindFocusByUID(UID)
+		}
+		vedioList = MFeedDaoImpl.GetVedioList(latestTime, 30, UID, focusList)
 		RFeedDaoImpl.InsertFeedInfo(vedioList)
 	}
 

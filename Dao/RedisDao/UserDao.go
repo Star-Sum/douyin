@@ -61,6 +61,7 @@ func (u *UserDaoImpl) RemoveUserInfo(userId int64) error {
 func (u *UserDaoImpl) GetUserInfo(userId int64) *RequestEntity.User {
 	key := "userInfo:user_" + strconv.FormatInt(userId, 10)
 	user := &RequestEntity.User{}
+	user.ID = -1
 	err := redisHandler.HGetAll(u.Ctx, key).Scan(user)
 	if err != nil {
 		return nil

@@ -20,6 +20,7 @@ var (
 	}
 )
 
+// MessageSendProcess 发送信息
 func MessageSendProcess(request RequestEntity.MessageSendRequest) RequestEntity.MessageSendBack {
 	var (
 		messageSendBack RequestEntity.MessageSendBack
@@ -157,12 +158,12 @@ func MessageProcess(request RequestEntity.MessageRequest) RequestEntity.MessageB
 func GetMessageList(fromUserID int64, toUserID int64) ([]RequestEntity.Message, error) {
 	// 先获取自己发给对方的消息列表
 	fromMessageList, err := RMessageDaoImpl.GetMessageList(fromUserID, toUserID)
-	if err != nil {
+	if err != nil || len(fromMessageList) < 10 {
 		// 从 Redis 获取失败，从 MySQL 获取消息列表
 		fromMessageList, err = MMessageDaoImpl.GetMessageList(fromUserID, toUserID)
 		if err != nil {
 			Log.ErrorLogWithoutPanic("GetMessageListFromMysql Error!", err)
-			return []RequestEntity.Message{}, err
+			return nil, err
 		}
 
 		// 将获取的消息列表存储到 Redis
@@ -174,12 +175,12 @@ func GetMessageList(fromUserID int64, toUserID int64) ([]RequestEntity.Message, 
 
 	// 再获取对方发给自己的消息列表
 	toMessageList, err := RMessageDaoImpl.GetMessageList(toUserID, fromUserID)
-	if err != nil {
+	if err != nil || len(toMessageList) < 10 {
 		// 从 Redis 获取失败，从 MySQL 获取消息列表
 		toMessageList, err = MMessageDaoImpl.GetMessageList(toUserID, fromUserID)
 		if err != nil {
 			Log.ErrorLogWithoutPanic("GetMessageListFromMysql Error!", err)
-			return []RequestEntity.Message{}, err
+			return nil, err
 		}
 
 		// 将获取的消息列表存储到 Redis

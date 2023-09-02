@@ -10,6 +10,7 @@ type PublishDao interface {
 	FindAuthorByVedioId(vedioId int64) int64
 	PublishVedio(info TableEntity.PublishInfo)
 	VedioInfoInsert(info TableEntity.VedioInfo)
+	FindVedioByAuthorUid(UID int64) []TableEntity.VedioInfo
 }
 type PublishDaoImpl struct {
 }
@@ -54,4 +55,16 @@ func (p *PublishDaoImpl) VedioInfoInsert(info TableEntity.VedioInfo) {
 		Log.ErrorLogWithoutPanic("Vedio Info Insert Error!", err)
 	}
 	Log.NormalLog("Vedio Info Insert Success!", nil)
+}
+
+func (p *PublishDaoImpl) FindVedioByAuthorUid(UID int64) []TableEntity.VedioInfo {
+	var (
+		vedioInfo []TableEntity.VedioInfo
+	)
+	err := mysqldb.Model(TableEntity.VedioInfo{}).Where("author_id =?", UID).Limit(100).Find(&vedioInfo).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Vedio Info Get Error!", err)
+		return nil
+	}
+	return vedioInfo
 }

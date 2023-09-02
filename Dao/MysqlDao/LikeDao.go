@@ -2,9 +2,11 @@ package MysqlDao
 
 import (
 	"douyin/Entity/TableEntity"
+	"douyin/Log"
 	"errors"
 	"gorm.io/gorm"
 	"sync"
+	"time"
 )
 
 // LikeDaos 建立单例模式
@@ -26,7 +28,7 @@ func NewLikeDao() *LikeDaos {
 }
 
 type LikeDao interface {
-	// QueryCountOfFavorite 从点赞记录里面查询某一条视频的点赞数 QueryCountOfFavorite
+	// QueryCountOfFavorite 从点赞记录里面查询某一条视频的点赞数
 	QueryCountOfFavorite(conditions map[string]interface{}) (int64, error)
 
 	//IsFavorite 查询userID的用户是否对videoID的视频点赞
@@ -46,7 +48,7 @@ type LikeDao interface {
 	FavoriteListByUserID(userID int64) ([]int64, error)
 }
 
-// QueryCountOfFavorite 从点赞记录里面查询某一条视频的点赞数 QueryCountOfFavorite
+// QueryCountOfFavorite 从点赞记录里面查询某一条视频的点赞数
 func (likeDaosInstance *LikeDaos) QueryCountOfFavorite(conditions map[string]interface{}) (int64, error) {
 	var count int64
 	err := mysqldb.Model(&TableEntity.LikeInfo{}).
@@ -76,10 +78,16 @@ func (likeDaosInstance *LikeDaos) IsFavorite(userID int64, videoID int64) bool {
 // Add 增加 一条点赞记录
 func (likeDaosInstance *LikeDaos) Add(userID, videoID int64) error {
 	f := TableEntity.LikeInfo{
-		UserID:  userID,
-		VideoID: videoID,
+		UserID:   userID,
+		VideoID:  videoID,
+		LikeTime: time.Now(),
 	}
-	return mysqldb.Model(&TableEntity.LikeInfo{}).Create(&f).Error
+	err := mysqldb.Create(&f).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Add Like Info Error!", err)
+		return err
+	}
+	return nil
 }
 
 // Sub 删除一条点赞记录
