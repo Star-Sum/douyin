@@ -4,7 +4,6 @@ import (
 	"douyin/Entity/RequestEntity"
 	"douyin/Entity/TableEntity"
 	"douyin/Log"
-	"douyin/Util"
 	"errors"
 	"log"
 )
@@ -29,6 +28,7 @@ func (c *CommentDaoImpl) InsertComment(content string, createDate string, vedioI
 	Log.NormalLog("CommentDao-InsertComment: running", nil)
 
 	//根据id获取user
+
 	var user TableEntity.UserInfo
 	err := mysqldb.Model(&TableEntity.UserInfo{}).Where("id=?", userId).Find(&user).Error
 	if err != nil {
@@ -44,6 +44,19 @@ func (c *CommentDaoImpl) InsertComment(content string, createDate string, vedioI
 		UserID:     userId,
 	}
 	err = mysqldb.Create(&tComment).Error
+
+	// 更新评论数
+	var commentCount int64
+	err = mysqldb.Model(TableEntity.VedioInfo{}).
+		Select("comment_count").Where("id =?", vedioId).Find(&commentCount).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Get Comment Count Error!", err)
+	}
+	err = mysqldb.Model(TableEntity.VedioInfo{}).
+		Where("id =?", vedioId).Update("comment_count", commentCount+1).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Set Comment Count Error!", err)
+	}
 
 	// 制作返回信息
 	var rUser = RequestEntity.User{
@@ -156,42 +169,4 @@ func (c *CommentDaoImpl) GetCommentList(videoId int64) ([]RequestEntity.Comment,
 	}
 	log.Println("CommentDao-GetCommentList: return commentList success") //函数执行成功，返回正确信息
 	return RcommentList, nil
-}
-
-// 个人重写
-
-func (c *CommentDaoImpl) InsertComment1(content string, createDate string, vedioId int64,
-	userId int64) (RequestEntity.Comment, error) {
-	// 标识函数已运行
-	Log.NormalLog("CommentDao-InsertComment: running", nil)
-	//数据库中插入一条评论信息
-
-	//根据雪花算法生成评论id
-	id, _ := Util.MakeUid(Util.Snowflake.DataCenterId, Util.Snowflake.MachineId)
-	//根据id获取user
-	var user = &RequestEntity.User{}
-	result := mysqldb.Model(&TableEntity.UserInfo{}).Where("id=?", id).First(&user)
-	if result.RowsAffected == 0 { //查询到y
-		Log.ErrorLogWithoutPanic("CommentDao-insertComment: return user is not existed", nil) //函数返回提示错误信息
-	}
-	var tComment = TableEntity.Comment{
-		Content:    content,
-		CreateDate: createDate,
-		VedioId:    vedioId,
-		UserID:     userId,
-	}
-	//err := MysqlDb.Model(model.CommentModel{}).Create(&comment).Error
-	var rComment = RequestEntity.Comment{
-		Content:    content,
-		CreateDate: createDate,
-		ID:         id,
-		User:       *user,
-	}
-	err := mysqldb.Create(tComment).Error
-	if err != nil {
-		log.Println("CommentDao-InsertComment: return create comment failed") //函数返回提示错误信息
-		return rComment, err
-	}
-	log.Println("CommentDao-InsertComment: return success") //函数执行成功，返回正确信息
-	return rComment, nil
 }

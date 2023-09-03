@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-// 进行点赞或者取消点赞的过程
+// LikeProcess 进行点赞或者取消点赞的过程
 func LikeProcess(request RequestEntity.LikeRequest) RequestEntity.LikeBack {
 	var (
 		likeBack RequestEntity.LikeBack
@@ -23,7 +23,7 @@ func LikeProcess(request RequestEntity.LikeRequest) RequestEntity.LikeBack {
 		return likeBack
 	}
 
-	// 传入的ActionType参数是string，先解析为int64——如果actiontype不是1（点赞）或者2（取消点赞），则
+	// 传入的ActionType参数是string，先解析为int64——如果actionType不是1（点赞）或者2（取消点赞），则
 	if (request.ActionType != "1") && (request.ActionType != "2") {
 		likeBack.StatusCode = 1
 		likeBack.StatusMsg = "Invalid action_type Param!"
@@ -106,12 +106,15 @@ func LikeProcess(request RequestEntity.LikeRequest) RequestEntity.LikeBack {
 }
 
 // LikeListProcess 请求点赞列表
-func LikeListProcess(request RequestEntity.LikeListRequest) []RequestEntity.VedioRequest {
+func LikeListProcess(request RequestEntity.LikeListRequest) RequestEntity.LikeListBack {
 	var (
-		likeListBack      []RequestEntity.VedioRequest
+		likeListBack      RequestEntity.LikeListBack
 		likeVideoInfoList []TableEntity.VedioInfo
 	)
-
+	successMsg := "Get Like List Success"
+	failMsg := "Get Like List Error"
+	likeListBack.StatusCode = "1"
+	likeListBack.StatusMsg = &failMsg
 	// 判断token是否合法，并提取fromUserID
 	if request.Token != "" {
 		_, err := Util.ParserToken(request.Token)
@@ -134,8 +137,11 @@ func LikeListProcess(request RequestEntity.LikeListRequest) []RequestEntity.Vedi
 		videoInfo := MFeedDaoImpl.FindVedioById(videoId)
 		likeVideoInfoList = append(likeVideoInfoList, videoInfo)
 	}
-
-	likeListBack = VedioListToRequest(likeVideoInfoList, -2)
+	uid, _ := strconv.ParseInt(request.UserID, 10, 64)
+	vedioListBack := VedioListToRequest(likeVideoInfoList, uid)
+	likeListBack.StatusCode = "0"
+	likeListBack.StatusMsg = &successMsg
+	likeListBack.VideoList = vedioListBack
 
 	return likeListBack
 }

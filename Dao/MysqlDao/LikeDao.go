@@ -3,8 +3,6 @@ package MysqlDao
 import (
 	"douyin/Entity/TableEntity"
 	"douyin/Log"
-	"errors"
-	"gorm.io/gorm"
 	"sync"
 	"time"
 )
@@ -82,9 +80,61 @@ func (likeDaosInstance *LikeDaos) Add(userID, videoID int64) error {
 		VideoID:  videoID,
 		LikeTime: time.Now(),
 	}
+	// 先添加点赞记录
 	err := mysqldb.Create(&f).Error
 	if err != nil {
 		Log.ErrorLogWithoutPanic("Add Like Info Error!", err)
+		return err
+	}
+	// 更新视频点赞量信息
+	var likeNum int64
+	err = mysqldb.Model(TableEntity.VedioInfo{}).
+		Select("favorite_count").Where("id =?", videoID).Find(&likeNum).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Like Count Get Error!", err)
+		return err
+	}
+	err = mysqldb.Model(TableEntity.VedioInfo{}).
+		Where("id =?", videoID).Update("favorite_count", likeNum+1).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Like Count Set Error!", err)
+		return err
+	}
+	// 更新点赞人的点赞信息
+	err = mysqldb.Model(TableEntity.UserInfo{}).
+		Select("favorite_count").Where("id =?", userID).Find(&likeNum).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Get Like Count Error!", err)
+		return nil
+	}
+	err = mysqldb.Model(TableEntity.UserInfo{}).
+		Where("id =?", userID).Update("favorite_count", likeNum+1).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Set Like Count Error!", err)
+		return err
+	}
+
+	// 更新作者被点赞量信息
+	var (
+		authUid      int64
+		totalLikeNum int64
+	)
+	err = mysqldb.Model(TableEntity.VedioInfo{}).Select("author_id").
+		Where("id =?", videoID).Find(&authUid).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Total Like Author Get Error!", err)
+		return err
+	}
+	err = mysqldb.Model(TableEntity.UserInfo{}).
+		Select("total_favorited").Where("id =?", authUid).Find(&totalLikeNum).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Total Like Info Get Error!", err)
+		return err
+	}
+	err = mysqldb.Model(TableEntity.UserInfo{}).
+		Where("id =?", userID).Update("total_favorited", totalLikeNum+1).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Total Like Info Set Error!", err)
 		return err
 	}
 	return nil
@@ -96,8 +146,67 @@ func (likeDaosInstance *LikeDaos) Sub(userID, videoID int64) error {
 		UserID:  userID,
 		VideoID: videoID,
 	}
-	return mysqldb.Model(&TableEntity.LikeInfo{}).
+	// 先删总点赞量
+	var (
+		authUid   int64
+		totalLike int64
+		likeCount int64
+	)
+	err := mysqldb.Model(TableEntity.VedioInfo{}).
+		Select("author_id").Where("id =?", videoID).Find(&authUid).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Find Auth Error!", err)
+		return err
+	}
+	err = mysqldb.Model(TableEntity.UserInfo{}).
+		Select("total_favorited").Where("id =?", authUid).Find(&totalLike).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Find Like Count Error!", err)
+		return err
+	}
+	err = mysqldb.Model(TableEntity.UserInfo{}).
+		Where("id =?", authUid).Update("total_favorited", totalLike-1).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Favorite Count Set Error!", nil)
+		return err
+	}
+
+	var likeNum int64
+	// 更新点赞人的点赞信息
+	err = mysqldb.Model(TableEntity.UserInfo{}).
+		Select("favorite_count").Where("id =?", userID).Find(&likeNum).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Get Like Count Error!", err)
+		return nil
+	}
+	err = mysqldb.Model(TableEntity.UserInfo{}).
+		Where("id =?", userID).Update("favorite_count", likeNum-1).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Set Like Count Error!", err)
+		return err
+	}
+
+	// 设置视频点赞量
+	err = mysqldb.Model(TableEntity.VedioInfo{}).
+		Select("favorite_count").Where("id =?", videoID).Find(&likeCount).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Like Info Get Error!", err)
+		return err
+	}
+	err = mysqldb.Model(TableEntity.VedioInfo{}).
+		Where("id =?", videoID).Update("favorite_count", likeCount-1).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Like Info Set Error!", err)
+		return err
+	}
+	// 最后删除点赞信息
+	err = mysqldb.Model(&TableEntity.LikeInfo{}).
 		Where("user_id =? AND video_id =?", userID, videoID).Delete(&f).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Delete Like Error!", err)
+		return err
+	}
+	return nil
 }
 
 // FavoriteListByUserID 获取某用户点赞的所有视频的 ID 列表
@@ -106,18 +215,17 @@ func (likeDaosInstance *LikeDaos) Sub(userID, videoID int64) error {
 func (likeDaosInstance *LikeDaos) FavoriteListByUserID(userID int64) ([]int64, error) {
 	var f []TableEntity.LikeInfo
 	err := mysqldb.Model(&TableEntity.LikeInfo{}).
-		Select("video_id").
-		Where("user_id").
+		Where("user_id = ?", userID).
 		Find(&f).Error
 
 	// 除了判断err不为空，也要处理 RecordNotFound 问题
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if err != nil {
 		return nil, nil
 	}
 
 	var res []int64
-	for _, i := range f {
-		res = append(res, i.VideoID)
+	for i := 0; i < len(f); i++ {
+		res = append(res, f[i].VideoID)
 	}
 	return res, nil
 }

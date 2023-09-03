@@ -13,7 +13,7 @@ func LikeImp(request RequestEntity.LikeRequest) RequestEntity.LikeBack {
 	return likeBack
 }
 
-func LikeListImp(request RequestEntity.LikeListRequest) []RequestEntity.VedioRequest {
+func LikeListImp(request RequestEntity.LikeListRequest) RequestEntity.LikeListBack {
 	// var (
 	// 	likeBack []RequestEntity.VedioRequest
 	// )
