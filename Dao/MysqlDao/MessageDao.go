@@ -33,14 +33,14 @@ func (u *MessageDaoImpl) GetMessageList(fromUserID int64, toUserID int64) ([]Tab
 
 // PostMessage 发送Message
 func (u *MessageDaoImpl) PostMessage(fromUserID int64, toUserID int64, content string, createTime int64) (int64, error) {
-	var message = &TableEntity.Message{
+	var message = TableEntity.Message{
 		FromUserID: fromUserID,
 		ToUserID:   toUserID,
 		Content:    content,
 		CreateTime: createTime,
 	}
 
-	if err := mysqldb.Create(message).Error; err != nil {
+	if err := mysqldb.Create(&message).Error; err != nil {
 		return 1, err
 	}
 

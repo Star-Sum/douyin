@@ -180,6 +180,7 @@ func NetServerStartup() {
 		var request RequestEntity.MessageRequest
 		request.Token = c.Query("token")
 		request.ToUserID = c.Query("to_user_id")
+		request.PreMsgTime = c.Query("pre_msg_time")
 		c.JSON(http.StatusOK, Controller.MessageImp(request))
 	})
 

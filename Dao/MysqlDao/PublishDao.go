@@ -39,6 +39,16 @@ func (p *PublishDaoImpl) PublishVedio(info TableEntity.PublishInfo) {
 	if err != nil {
 		Log.ErrorLogWithoutPanic("Publish Vedio Info Error!", err)
 	}
+	var workNum int64
+	err = mysqldb.Model(TableEntity.UserInfo{}).Where("id =?", info.UseID).Find(&workNum).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Publish Count Get Error!", err)
+	}
+	err = mysqldb.Model(TableEntity.UserInfo{}).
+		Where("id =?", info.UseID).Update("work_count", workNum+1).Error
+	if err != nil {
+		Log.ErrorLogWithoutPanic("Publish Count Set Error!", err)
+	}
 	Log.NormalLog("Publish Vedio Info Success!", nil)
 }
 

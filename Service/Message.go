@@ -74,6 +74,7 @@ func MessageSendProcess(request RequestEntity.MessageSendRequest) RequestEntity.
 
 	// 获取当前时间戳
 	createTime := time.Now().Unix()
+	createTime = Util.TimeStampTransfer(strconv.FormatInt(createTime, 10))
 	postStatusCode, err := MMessageDaoImpl.PostMessage(fromUserID, toUserID, content, createTime)
 
 	// 数据库插入结果正确返回
@@ -146,7 +147,6 @@ func MessageProcess(request RequestEntity.MessageRequest) RequestEntity.MessageB
 		Log.ErrorLogWithoutPanic("Database error!", err)
 		return messageBack
 	}
-
 	// 正确返回
 	SuccessMsg := "success"
 	messageBack.StatusCode = "0"
@@ -154,17 +154,14 @@ func MessageProcess(request RequestEntity.MessageRequest) RequestEntity.MessageB
 	return messageBack
 }
 
-var (
-	pTime int64 = 0
-)
-
 // GetMessageList 获取fromUserID和toUserID互发的消息
-func GetMessageList(fromUserID int64, toUserID int64, preTime int64) ([]RequestEntity.Message, error) {
+func GetMessageList(fromUserID int64, toUserID int64, preTime string) ([]RequestEntity.Message, error) {
 	// 先获取自己发给对方的消息列表
-	fromMessageList, err := RMessageDaoImpl.GetMessageList(fromUserID, toUserID)
-	if err != nil || len(fromMessageList) < 10 {
+	//fromMessageList, err := RMessageDaoImpl.GetMessageList(fromUserID, toUserID)
+	fromMessageList, err := MMessageDaoImpl.GetMessageList(fromUserID, toUserID)
+	if err != nil {
 		// 从 Redis 获取失败，从 MySQL 获取消息列表
-		fromMessageList, err = MMessageDaoImpl.GetMessageList(fromUserID, toUserID)
+
 		if err != nil {
 			Log.ErrorLogWithoutPanic("GetMessageListFromMysql Error!", err)
 			return nil, err
@@ -178,10 +175,11 @@ func GetMessageList(fromUserID int64, toUserID int64, preTime int64) ([]RequestE
 	}
 
 	// 再获取对方发给自己的消息列表
-	toMessageList, err := RMessageDaoImpl.GetMessageList(toUserID, fromUserID)
+	//toMessageList, err := RMessageDaoImpl.GetMessageList(toUserID, fromUserID)
+	toMessageList, err := MMessageDaoImpl.GetMessageList(toUserID, fromUserID)
 	if err != nil || len(toMessageList) < 10 {
 		// 从 Redis 获取失败，从 MySQL 获取消息列表
-		toMessageList, err = MMessageDaoImpl.GetMessageList(toUserID, fromUserID)
+
 		if err != nil {
 			Log.ErrorLogWithoutPanic("GetMessageListFromMysql Error!", err)
 			return nil, err
@@ -194,24 +192,19 @@ func GetMessageList(fromUserID int64, toUserID int64, preTime int64) ([]RequestE
 		}
 	}
 	mergedMessageList := mergeMessageLists(fromMessageList, toMessageList)
-	stringInt := strconv.FormatInt(preTime, 10)
-	if stringInt != "0" {
-		stringInt = stringInt[0:11]
-	}
 
-	preTime, _ = strconv.ParseInt(stringInt, 10, 64)
-	if pTime == 0 && (preTime != pTime && preTime != 0) {
-		pTime = preTime
-	}
-
-	nowTime := time.Now().Unix()
+	// 调取消息记录
 	var finalMessage []RequestEntity.Message
+	nowTime := Util.TimeStampTransfer(strconv.FormatInt(time.Now().Unix(), 10))
+	pTime := Util.TimeStampTransfer(preTime)
+
 	for i := 0; i < len(mergedMessageList); i++ {
-		if mergedMessageList[i].CreateTime >= pTime && mergedMessageList[i].CreateTime <= nowTime {
+		mergedMessageList[i].CreateTime = Util.TimeStampTransfer(strconv.FormatInt(mergedMessageList[i].CreateTime, 10))
+		if mergedMessageList[i].CreateTime > pTime && mergedMessageList[i].CreateTime <= nowTime {
 			finalMessage = append(finalMessage, mergedMessageList[i])
 		}
 	}
-	pTime = nowTime
+
 	return finalMessage, nil
 }
 
