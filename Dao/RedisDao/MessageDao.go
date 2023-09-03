@@ -10,7 +10,7 @@ import (
 )
 
 type MessageDao interface {
-	// 从redis缓存中获取user的聊天记录
+	// GetMessageList 从redis缓存中获取user的聊天记录
 	GetMessageList(fromUserID int64, toUserID int64) ([]TableEntity.Message, error)
 	SetMessageList(fromUserID int64, toUserID int64, messages []TableEntity.Message) error
 }

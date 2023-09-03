@@ -258,7 +258,7 @@ func (r *RelationDao) WriteFollowDataToDatabase(userId, toUserId int64) ([]Follo
 	return follows, err
 }
 
-// 判断是否存在该缓存
+// ExistsFollow 判断是否存在该缓存
 func (r *RelationDao) ExistsFollow(userID, touserID string) (bool, error) {
 	key := "Relation:_follow" + userID + "to" + touserID
 	result, err := redisHandler.Exists(r.Ctx, key).Result()

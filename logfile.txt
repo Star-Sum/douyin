@@ -1,0 +1,218 @@
+2023/09/02 23:59:47 Successfully read snowflakeConfig configuration file!
+2023/09/02 23:59:47 Successfully obtained snowflakeConfig settings!
+2023/09/02 23:59:47 Successfully read database configuration file!
+2023/09/02 23:59:47 Successfully obtained Mysql database settings!
+2023/09/02 23:59:47 Database opened successfully!
+2023/09/02 23:59:47 Database:douyin connected successfully！
+2023/09/02 23:59:47 Gorm framework startup successfully!
+2023/09/02 23:59:47 Successfully read database configuration file!
+2023/09/02 23:59:47 Successfully obtained Redis database settings!
+2023/09/02 23:59:55 Redis Connect Failed!
+2023/09/03 00:00:12 Successfully read snowflakeConfig configuration file!
+2023/09/03 00:00:12 Successfully obtained snowflakeConfig settings!
+2023/09/03 00:00:12 Successfully read database configuration file!
+2023/09/03 00:00:12 Successfully obtained Mysql database settings!
+2023/09/03 00:00:12 Database opened successfully!
+2023/09/03 00:00:12 Database:douyin connected successfully！
+2023/09/03 00:00:12 Gorm framework startup successfully!
+2023/09/03 00:00:12 Successfully read database configuration file!
+2023/09/03 00:00:12 Successfully obtained Redis database settings!
+2023/09/03 00:00:12 Redis Connect Success!
+2023/09/03 00:00:12 Create UserInfo Table Success!
+2023/09/03 00:00:12 Create UserAccount Table Success!
+2023/09/03 00:00:12 Create VedioInfo Table Success!
+2023/09/03 00:00:12 Create Comment Table Success!
+2023/09/03 00:00:12 Create Message Table Success!
+2023/09/03 00:00:12 Create Follow Table Success!
+2023/09/03 00:00:12 Create LikeInfo Table Success!
+2023/09/03 00:00:12 Create PublishInfo Table Success!
+2023/09/03 00:00:16 Shutdown Server ...
+2023/09/03 00:00:16 Server Exiting
+2023/09/03 10:08:33 Successfully read snowflakeConfig configuration file!
+2023/09/03 10:08:33 Successfully obtained snowflakeConfig settings!
+2023/09/03 10:08:33 Successfully read database configuration file!
+2023/09/03 10:08:33 Successfully obtained Mysql database settings!
+2023/09/03 10:08:33 Database opened successfully!
+2023/09/03 10:08:33 Database:douyin connected successfully！
+2023/09/03 10:08:33 Gorm framework startup successfully!
+2023/09/03 10:08:33 Successfully read database configuration file!
+2023/09/03 10:08:33 Successfully obtained Redis database settings!
+2023/09/03 10:08:33 Redis Connect Success!
+2023/09/03 10:08:33 Create UserInfo Table Success!
+2023/09/03 10:08:33 Create UserAccount Table Success!
+2023/09/03 10:08:33 Create VedioInfo Table Success!
+2023/09/03 10:08:33 Create Comment Table Success!
+2023/09/03 10:08:33 Create Message Table Success!
+2023/09/03 10:08:33 Create Follow Table Success!
+2023/09/03 10:08:33 Create LikeInfo Table Success!
+2023/09/03 10:08:33 Create PublishInfo Table Success!
+2023/09/03 10:09:23 JSON parsing successful!
+2023/09/03 10:09:23 JSON parsing successful!
+2023/09/03 10:09:23 Successfully output JSON!
+2023/09/03 10:09:23 Successfully output JSON!
+2023/09/03 10:09:23 Successfully output JSON!
+2023/09/03 10:09:23 Successfully output JSON!
+2023/09/03 10:09:23 Successfully output JSON!
+2023/09/03 10:09:23 Successfully output JSON!
+2023/09/03 10:09:23 Successfully output JSON!
+2023/09/03 10:09:23 Successfully output JSON!
+2023/09/03 10:09:23 Successfully output JSON!
+2023/09/03 10:09:23 Successfully output JSON!
+2023/09/03 10:09:23 Publish Record Success!
+2023/09/03 10:09:34 UserLoginProcess
+2023/09/03 10:09:34 username or password is incorrect
+2023/09/03 10:09:42 UserLoginProcess
+2023/09/03 10:09:42 username or password is incorrect
+2023/09/03 10:09:47 UserLoginProcess
+2023/09/03 10:09:47 username or password is incorrect
+2023/09/03 10:09:51 UserLoginProcess
+2023/09/03 10:09:51 Token created successfully!
+2023/09/03 10:09:51 user login success:485825507577958400
+2023/09/03 10:09:51 UserInfoProcess
+2023/09/03 10:09:51 Token is valid!
+2023/09/03 10:09:51 Token is valid!
+2023/09/03 10:09:51 Token is valid!
+2023/09/03 10:09:51 Successfully output JSON!
+2023/09/03 10:09:51 Successfully output JSON!
+2023/09/03 10:09:51 Successfully output JSON!
+2023/09/03 10:09:51 Successfully output JSON!
+2023/09/03 10:09:51 Publish Record Success!
+2023/09/03 10:09:53 FriendListProcess
+2023/09/03 10:09:53 存在
+2023/09/03 10:09:54 Token is valid!
+2023/09/03 10:09:54 GetMessagesFromRedis: No messages found in Redis.
+2023/09/03 10:09:54 GetMessagesFromRedis: No messages found in Redis.
+2023/09/03 10:09:55 Token is valid!
+2023/09/03 10:09:56 Token is valid!
+2023/09/03 10:09:57 Token is valid!
+2023/09/03 10:09:58 Token is valid!
+2023/09/03 10:09:59 Token is valid!
+2023/09/03 10:10:00 Token is valid!
+2023/09/03 10:10:01 Token is valid!
+2023/09/03 10:10:02 Token is valid!
+2023/09/03 10:10:02 FriendListProcess
+2023/09/03 10:10:02 存在
+2023/09/03 10:10:03 Token is valid!
+2023/09/03 10:10:04 Token is valid!
+2023/09/03 10:10:04 Token is valid!
+2023/09/03 10:10:04 Successfully output JSON!
+2023/09/03 10:10:04 Successfully output JSON!
+2023/09/03 10:10:04 Successfully output JSON!
+2023/09/03 10:10:04 Successfully output JSON!
+2023/09/03 10:10:04 Publish Record Success!
+2023/09/03 10:10:04 Token is valid!
+2023/09/03 10:10:05 Token is valid!
+2023/09/03 10:10:06 JSON parsing successful!
+2023/09/03 10:10:06 JSON parsing successful!
+2023/09/03 10:10:06 JSON parsing successful!
+2023/09/03 10:10:06 JSON parsing successful!
+2023/09/03 10:10:06 JSON parsing successful!
+2023/09/03 10:10:06 JSON parsing successful!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Publish Record Success!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Successfully output JSON!
+2023/09/03 10:10:06 Publish Record Success!
+2023/09/03 10:10:06 Invalid token!
+2023/09/03 10:10:06 token contains an invalid number of segments
+2023/09/03 10:10:06 goroutine 120 [running]:
+runtime/debug.Stack()
+	F:/Go/src/runtime/debug/stack.go:24 +0x65
+douyin/Log.LogWrite({0x17e2e15, 0xe}, {0x18e4d20, 0xc0006b4090})
+	F:/GoLearn/douyin1/douyin/Log/Log.go:32 +0x14d
+douyin/Log.ErrorLogWithoutPanic({0x17e2e15, 0xe}, {0x18e4d20, 0xc0006b4090})
+	F:/GoLearn/douyin1/douyin/Log/Log.go:46 +0xa5
+douyin/Util.ParserToken({0xc00038802f, 0x0})
+	F:/GoLearn/douyin1/douyin/Util/Token.go:48 +0x9b
+douyin/Service.MessageProcess({{0xc000388041?, 0x17e0260?}, {0xc00038802f?, 0x80?}})
+	F:/GoLearn/douyin1/douyin/Service/Message.go:98 +0x7b
+douyin/Controller.MessageImp(...)
+	F:/GoLearn/douyin1/douyin/Controller/Message.go:20
+douyin/Servlet.NetServerStartup.func16(0x179d620?)
+	F:/GoLearn/douyin1/douyin/Servlet/Server.go:183 +0x6b
+github.com/gin-gonic/gin.(*Context).Next(...)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1(0xc0007b0300)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/recovery.go:102 +0x82
+github.com/gin-gonic/gin.(*Context).Next(...)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.LoggerWithConfig.func1(0xc0007b0300)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/logger.go:240 +0xe7
+github.com/gin-gonic/gin.(*Context).Next(...)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest(0xc0004816c0, 0xc0007b0300)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 +0x66b
+github.com/gin-gonic/gin.(*Engine).ServeHTTP(0xc0004816c0, {0x18e8cb0?, 0xc0000da000}, 0xc0007b0000)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 +0x1dd
+net/http.serverHandler.ServeHTTP({0xc0006aaf30?}, {0x18e8cb0, 0xc0000da000}, 0xc0007b0000)
+	F:/Go/src/net/http/server.go:2936 +0x316
+net/http.(*conn).serve(0xc000534480, {0x18e9578, 0xc0006aa150})
+	F:/Go/src/net/http/server.go:1995 +0x612
+created by net/http.(*Server).Serve
+	F:/Go/src/net/http/server.go:3089 +0x5ed
+
+2023/09/03 10:10:06 Token Parse Error!
+2023/09/03 10:10:06 token contains an invalid number of segments
+2023/09/03 10:10:06 goroutine 120 [running]:
+runtime/debug.Stack()
+	F:/Go/src/runtime/debug/stack.go:24 +0x65
+douyin/Log.LogWrite({0x17e6bf1, 0x12}, {0x18e4d20, 0xc0006b4090})
+	F:/GoLearn/douyin1/douyin/Log/Log.go:32 +0x14d
+douyin/Log.ErrorLogWithoutPanic({0x17e6bf1, 0x12}, {0x18e4d20, 0xc0006b4090})
+	F:/GoLearn/douyin1/douyin/Log/Log.go:46 +0xa5
+douyin/Service.MessageProcess({{0xc000388041?, 0x17e0260?}, {0xc00038802f?, 0x80?}})
+	F:/GoLearn/douyin1/douyin/Service/Message.go:104 +0x594
+douyin/Controller.MessageImp(...)
+	F:/GoLearn/douyin1/douyin/Controller/Message.go:20
+douyin/Servlet.NetServerStartup.func16(0x179d620?)
+	F:/GoLearn/douyin1/douyin/Servlet/Server.go:183 +0x6b
+github.com/gin-gonic/gin.(*Context).Next(...)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1(0xc0007b0300)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/recovery.go:102 +0x82
+github.com/gin-gonic/gin.(*Context).Next(...)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.LoggerWithConfig.func1(0xc0007b0300)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/logger.go:240 +0xe7
+github.com/gin-gonic/gin.(*Context).Next(...)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest(0xc0004816c0, 0xc0007b0300)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 +0x66b
+github.com/gin-gonic/gin.(*Engine).ServeHTTP(0xc0004816c0, {0x18e8cb0?, 0xc0000da000}, 0xc0007b0000)
+	F:/Go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 +0x1dd
+net/http.serverHandler.ServeHTTP({0xc0006aaf30?}, {0x18e8cb0, 0xc0000da000}, 0xc0007b0000)
+	F:/Go/src/net/http/server.go:2936 +0x316
+net/http.(*conn).serve(0xc000534480, {0x18e9578, 0xc0006aa150})
+	F:/Go/src/net/http/server.go:1995 +0x612
+created by net/http.(*Server).Serve
+	F:/Go/src/net/http/server.go:3089 +0x5ed
+
+2023/09/03 10:10:13 UserLoginProcess
+2023/09/03 10:10:13 Token created successfully!
+2023/09/03 10:10:13 user login success:485825820561117184
+2023/09/03 10:10:13 UserInfoProcess
+2023/09/03 10:10:13 Token is valid!
+2023/09/03 10:10:13 Token is valid!
+2023/09/03 10:10:13 Token is valid!
+2023/09/03 10:10:13 Successfully output JSON!
+2023/09/03 10:10:13 Successfully output JSON!
+2023/09/03 10:10:13 Publish Record Success!
+2023/09/03 10:10:15 FriendListProcess
+2023/09/03 10:11:21 Token is valid!
+2023/09/03 10:11:21 Token is valid!
+2023/09/03 10:11:21 Successfully output JSON!
+2023/09/03 10:11:21 Successfully output JSON!
+2023/09/03 10:11:21 Publish Record Success!
+2023/09/03 10:11:22 FriendListProcess
+2023/09/03 10:11:22 存在

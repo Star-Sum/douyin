@@ -138,7 +138,7 @@ func MessageProcess(request RequestEntity.MessageRequest) RequestEntity.MessageB
 	}
 
 	// 获取消息列表、合并并按时间戳排序
-	if messageBack.MessageList, err = GetMessageList(fromUserID, toUserID); err != nil {
+	if messageBack.MessageList, err = GetMessageList(fromUserID, toUserID, request.PreMsgTime); err != nil {
 		FailedMsg := "Database error!"
 		messageBack.StatusCode = "1"
 		messageBack.MessageList = []RequestEntity.Message{}
@@ -154,8 +154,12 @@ func MessageProcess(request RequestEntity.MessageRequest) RequestEntity.MessageB
 	return messageBack
 }
 
+var (
+	pTime int64 = 0
+)
+
 // GetMessageList 获取fromUserID和toUserID互发的消息
-func GetMessageList(fromUserID int64, toUserID int64) ([]RequestEntity.Message, error) {
+func GetMessageList(fromUserID int64, toUserID int64, preTime int64) ([]RequestEntity.Message, error) {
 	// 先获取自己发给对方的消息列表
 	fromMessageList, err := RMessageDaoImpl.GetMessageList(fromUserID, toUserID)
 	if err != nil || len(fromMessageList) < 10 {
@@ -190,7 +194,25 @@ func GetMessageList(fromUserID int64, toUserID int64) ([]RequestEntity.Message, 
 		}
 	}
 	mergedMessageList := mergeMessageLists(fromMessageList, toMessageList)
-	return mergedMessageList, nil
+	stringInt := strconv.FormatInt(preTime, 10)
+	if stringInt != "0" {
+		stringInt = stringInt[0:11]
+	}
+
+	preTime, _ = strconv.ParseInt(stringInt, 10, 64)
+	if pTime == 0 && (preTime != pTime && preTime != 0) {
+		pTime = preTime
+	}
+
+	nowTime := time.Now().Unix()
+	var finalMessage []RequestEntity.Message
+	for i := 0; i < len(mergedMessageList); i++ {
+		if mergedMessageList[i].CreateTime >= pTime && mergedMessageList[i].CreateTime <= nowTime {
+			finalMessage = append(finalMessage, mergedMessageList[i])
+		}
+	}
+	pTime = nowTime
+	return finalMessage, nil
 }
 
 // 合并消息列表并按时间戳排序

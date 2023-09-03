@@ -13,8 +13,9 @@ type MessageSendBack struct {
 }
 
 type MessageRequest struct {
-	ToUserID string `json:"to_user_id"` // 对方用户id
-	Token    string `json:"token"`      // 用户鉴权token
+	ToUserID   string `json:"to_user_id"`   // 对方用户id
+	Token      string `json:"token"`        // 用户鉴权token
+	PreMsgTime int64  `json:"pre_msg_time"` // 上一条信息的时间
 }
 
 type MessageBack struct {
