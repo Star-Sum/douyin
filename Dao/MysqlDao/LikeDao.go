@@ -132,7 +132,7 @@ func (likeDaosInstance *LikeDaos) Add(userID, videoID int64) error {
 		return err
 	}
 	err = mysqldb.Model(TableEntity.UserInfo{}).
-		Where("id =?", userID).Update("total_favorited", totalLikeNum+1).Error
+		Where("id =?", authUid).Update("total_favorited", totalLikeNum+1).Error
 	if err != nil {
 		Log.ErrorLogWithoutPanic("Total Like Info Set Error!", err)
 		return err
