@@ -205,7 +205,7 @@ Feed流的模式分为拉模式、推模式和推拉结合模式。拉模式即�
 
 
 ## Demo 演示视频 
-<video src="./Markdown/show.mp4" width="300px" height="600px" controls="controls" type="video/mp4"></video>
+<video src="show.mp4"></video>
 ## 项目总结与反思
 
 1.本次在项目开发过程中使用了MVC架构，极大地降低了项目耦合程度，为项目开发带来方便
